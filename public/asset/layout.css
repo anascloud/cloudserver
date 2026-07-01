@@ -1,0 +1,67 @@
+
+body{ font-family: my_kalpurush;}
+.layout-boxed .wrapper{ max-width: 1020px; }
+.content-wrapper, .right-side, .main-footer{ margin-left: 0px;}
+.main-header{ background: #8ac007; color: #fff; min-height: 130px; max-height: 500px;}
+.main-footer{ background: #608621;}
+.main-footer a{ color: #fff;}
+.main-head-content{ padding: 15px;}
+.site-logo{ text-align: center;}
+.site-logo img{ height: 100px;}
+.site-title h2{ font-family: inherit; text-align: center;}
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6{ font-family: kalpurush;}
+.loading{ text-align: center;}
+.input_find, .select_find {width: 100% !important;}
+.sign{ width: 100px; height: 50px;}
+.data_table thead tr:nth-child(2) td input{ width: 100%;}
+
+div.pagination{ padding-top: 10px; width: 100%;}
+div.pagination div.pagi_info{float: right; line-height: 30px;}
+div.pagination ul{ padding: 0px; margin: 0px; float: left; border: 1px solid #CCCCCC; border-radius: 5px;}
+div.pagination ul li{ list-style:none; display: inline-block; padding: 5px 10px; border-right: 1px solid #CCCCCC;}
+div.pagination ul li:last-child{ border: none;}
+div.pagination ul li.active{ background: #e5e5e5;}
+div.pagination ul li.pagi_active{ cursor: pointer;}
+div.pagination ul li.pagi_active:hover{ background:#e5e5e5;}
+.td_action{ width: 50px !important;}
+.link_action{ margin: 0px 5px;}
+.link_action img{}
+
+.approve_group{ display: none;}
+
+.sign_list{ height:30px;}
+
+.admindata {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.member{}
+.member table{
+    width: 100%;
+    margin-bottom: 20px;
+}
+.member table{}
+
+
+@media (max-width: 875px) {
+
+    .site-title h2{
+        font-size: 20px;
+    }
+}
+
+
+@media (max-width: 599px) {
+    .site-logo{
+        width: 100%;
+        text-align: center;
+    }
+    .site-title{
+        width: 100%;
+        text-align: center;
+    }
+    .site-title h2{
+        font-size: 20px;
+    }
+}
