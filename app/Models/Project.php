@@ -5,19 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Campaign extends Model
+class Project extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'subject',
-        'deadline',
-        'company',
-        'service',
+        'title',
+        'category',
         'description',
-        'contact',
-        'source',
-        'type',
-        'status',
+        'image',
+        'link',
     ];
 }

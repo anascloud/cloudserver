@@ -57,6 +57,20 @@ class UnitController extends Controller
      *     @OA\Response(response=404, description="Resource Not Found"),
      * )
      */
+    public function search(Request $request)
+    {
+        try {
+            $search = $request->input('search');
+            $perPage = $request->input('perPage', 10);
+            $data = DB::table('units')
+                ->where('name', 'LIKE', '%' . $search . '%')
+                ->paginate($perPage);
+            return $this->responseRepository->ResponseSuccess($data, 'Unit Search Results Fetched Successfully!');
+        } catch (\Exception $e) {
+            return $this->responseRepository->ResponseError(null, $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public function indexAll(Request $request)
     {
         try {

@@ -11,7 +11,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 use DB;
 
-class FeedbackController extends Controller
+class FeedbacksController extends Controller
 {
     public $feedbackRepository;
     public $responseRepository;

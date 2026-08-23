@@ -13,6 +13,200 @@
         "version": "1.0.0"
     },
     "paths": {
+        "/api/attributes": {
+            "get": {
+                "tags": [
+                    "Attributes"
+                ],
+                "summary": "Get Attribute List",
+                "description": "Get Attribute List as Array",
+                "operationId": "index",
+                "responses": {
+                    "200": {
+                        "description": "Get Attribute List as Array"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Attributes"
+                ],
+                "summary": "Create New Attribute",
+                "description": "Create New Attribute",
+                "operationId": "store",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Color"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Create New Attribute"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            }
+        },
+        "/api/attributes/view/all": {
+            "get": {
+                "tags": [
+                    "Attributes"
+                ],
+                "summary": "All attributes - Publicly Accessible",
+                "description": "All attributes - Publicly Accessible",
+                "operationId": "indexAll",
+                "parameters": [
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "perPage, eg; 20",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 20
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "All attributes - Publicly Accessible"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            }
+        },
+        "/api/attributes/{id}": {
+            "get": {
+                "tags": [
+                    "Attributes"
+                ],
+                "summary": "Show Attribute Details",
+                "description": "Show Attribute Details",
+                "operationId": "show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id, eg; 1",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Show Attribute Details"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Attributes"
+                ],
+                "summary": "Update Attribute",
+                "description": "Update Attribute",
+                "operationId": "update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id, eg; 1",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Updated Color"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update Attribute"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Attributes"
+                ],
+                "summary": "Delete Attribute",
+                "description": "Delete Attribute",
+                "operationId": "destroy",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id, eg; 1",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete Attribute"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            }
+        },
         "/api/auth/login": {
             "post": {
                 "tags": [
@@ -20,7 +214,7 @@
                 ],
                 "summary": "Login",
                 "description": "Login",
-                "operationId": "App\\Http\\Controllers\\Auth\\AuthController::login",
+                "operationId": "535ffeda4b78916efd658b2844ea897a",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -28,11 +222,11 @@
                                 "properties": {
                                     "email": {
                                         "type": "string",
-                                        "example": "admin@gmail.com"
+                                        "example": "manirujjamanakash@gmail.com"
                                     },
                                     "password": {
                                         "type": "string",
-                                        "example": "admin"
+                                        "example": "123456"
                                     }
                                 },
                                 "type": "object"
@@ -60,19 +254,23 @@
                 ],
                 "summary": "Register User",
                 "description": "Register New User",
-                "operationId": "App\\Http\\Controllers\\Auth\\AuthController::register",
+                "operationId": "da8643013c2941f5ed7f8a9c9b4a7f7a",
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "name": {
+                                    "fullName": {
                                         "type": "string",
                                         "example": "Jhon Doe"
                                     },
                                     "email": {
                                         "type": "string",
                                         "example": "jhondoe@example.com"
+                                    },
+                                    "mobileNo": {
+                                        "type": "string",
+                                        "example": "017........"
                                     },
                                     "password": {
                                         "type": "string",
@@ -108,7 +306,7 @@
                 ],
                 "summary": "Authenticated User Profile",
                 "description": "Authenticated User Profile",
-                "operationId": "App\\Http\\Controllers\\Auth\\AuthController::me",
+                "operationId": "1537d2a532022d0974e4cd2d83c6a38f",
                 "responses": {
                     "200": {
                         "description": "Authenticated User Profile"
@@ -129,7 +327,7 @@
                 ],
                 "summary": "Logout",
                 "description": "Logout",
-                "operationId": "App\\Http\\Controllers\\Auth\\AuthController::logout",
+                "operationId": "46f8a14c8083abb69eed72768aa08629",
                 "responses": {
                     "200": {
                         "description": "Logout"
@@ -150,10 +348,546 @@
                 ],
                 "summary": "Refresh",
                 "description": "Refresh",
-                "operationId": "App\\Http\\Controllers\\Auth\\AuthController::refresh",
+                "operationId": "f3538b6e9c46bcf601a9d194288b03d4",
                 "responses": {
                     "200": {
                         "description": "Refresh"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            }
+        },
+        "/api/auth/forgot-password": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Forgot Password",
+                "description": "Send password reset link",
+                "operationId": "a170cc694fe243a798c6038c995d26b4",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "user@example.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password reset link sent"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            }
+        },
+        "/api/auth/reset-password": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Reset Password",
+                "description": "Reset user password",
+                "operationId": "030dad9d9c157fa5e60a3264f7e0de3e",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "token": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "newpassword"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "example": "newpassword"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password reset successful"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            }
+        },
+        "/api/feedbacks": {
+            "get": {
+                "tags": [
+                    "Feedbacks"
+                ],
+                "summary": "Get Feedback List",
+                "description": "Get Feedback List as Array",
+                "operationId": "index",
+                "responses": {
+                    "200": {
+                        "description": "Get Feedback List as Array"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Feedbacks"
+                ],
+                "summary": "Create New Feedback",
+                "description": "Create New Feedback",
+                "operationId": "store",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Feedback Title"
+                                    },
+                                    "product": {
+                                        "type": "string",
+                                        "example": "Product Name"
+                                    },
+                                    "reference": {
+                                        "type": "string",
+                                        "example": "Reference Code"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Feedback Description"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Create New Feedback"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            }
+        },
+        "/api/feedbacks/view/all": {
+            "get": {
+                "tags": [
+                    "Feedbacks"
+                ],
+                "summary": "All Feedbacks - Publicly Accessible",
+                "description": "All Feedbacks - Publicly Accessible",
+                "operationId": "indexAll",
+                "parameters": [
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "perPage, eg; 20",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 20
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "All Feedbacks - Publicly Accessible"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            }
+        },
+        "/api/feedbacks/{id}": {
+            "get": {
+                "tags": [
+                    "Feedbacks"
+                ],
+                "summary": "Show Feedback Details",
+                "description": "Show Feedback Details",
+                "operationId": "show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id, eg; 1",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Show Feedback Details"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Feedbacks"
+                ],
+                "summary": "Update Feedback",
+                "description": "Update Feedback",
+                "operationId": "update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id, eg; 1",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Updated Feedback Title"
+                                    },
+                                    "product": {
+                                        "type": "string",
+                                        "example": "Updated Product Name"
+                                    },
+                                    "reference": {
+                                        "type": "string",
+                                        "example": "Updated Reference Code"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Updated Feedback Description"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update Feedback"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Feedbacks"
+                ],
+                "summary": "Delete Feedback",
+                "description": "Delete Feedback",
+                "operationId": "destroy",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id, eg; 1",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete Feedback"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            }
+        },
+        "/api/permissions": {
+            "get": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Get Permission List",
+                "description": "Get Permission List as Array",
+                "operationId": "index",
+                "responses": {
+                    "200": {
+                        "description": "Get Permission List as Array"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Create New Permission",
+                "description": "Create New Permission",
+                "operationId": "store",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Read"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Create New Permission"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            }
+        },
+        "/api/permissions/view/all": {
+            "get": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "All Permissions - Publicly Accessible",
+                "description": "All Permissions - Publicly Accessible",
+                "operationId": "indexAll",
+                "parameters": [
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "perPage, eg; 20",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 20
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "All Permissions - Publicly Accessible"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            }
+        },
+        "/api/permissions/view/search": {
+            "get": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Search Permissions - Publicly Accessible",
+                "description": "Search Permissions - Publicly Accessible",
+                "operationId": "search",
+                "parameters": [
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "perPage, eg; 20",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 20
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "search, eg; Read",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Read"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Search Permissions - Publicly Accessible"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            }
+        },
+        "/api/permissions/{id}": {
+            "get": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Show Permission Details",
+                "description": "Show Permission Details",
+                "operationId": "show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id, eg; 1",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Show Permission Details"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Update Permission",
+                "description": "Update Permission",
+                "operationId": "update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id, eg; 1",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Read"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update Permission"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Delete Permission",
+                "description": "Delete Permission",
+                "operationId": "destroy",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id, eg; 1",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete Permission"
                     },
                     "400": {
                         "description": "Bad request"
@@ -423,6 +1157,243 @@
                 }
             }
         },
+        "/api/projects": {
+            "get": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Get Project List",
+                "description": "Get paginated project list",
+                "operationId": "index",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 10
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Project List Fetched Successfully"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Create New Project",
+                "description": "Create a new project entry",
+                "operationId": "store",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Pouchao"
+                                    },
+                                    "category": {
+                                        "type": "string",
+                                        "example": "Car-Rental"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Car Rental Booking System"
+                                    },
+                                    "image": {
+                                        "type": "string",
+                                        "example": "https://example.com/image.png"
+                                    },
+                                    "link": {
+                                        "type": "string",
+                                        "example": "https://example.com/project"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "New Project Created Successfully"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                }
+            }
+        },
+        "/api/projects/view/all": {
+            "get": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "All Projects - Publicly Accessible",
+                "description": "Get all projects without auth",
+                "operationId": "indexAll",
+                "responses": {
+                    "200": {
+                        "description": "All Projects Fetched Successfully"
+                    }
+                }
+            }
+        },
+        "/api/projects/view/search": {
+            "get": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Search Projects",
+                "description": "Search projects by title, category, or description",
+                "operationId": "search",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Pouchao"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Search results"
+                    }
+                }
+            }
+        },
+        "/api/projects/{id}": {
+            "get": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Show Project Details",
+                "description": "Get project by ID",
+                "operationId": "show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Project Details Fetched Successfully"
+                    },
+                    "404": {
+                        "description": "Project Not Found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Update Project",
+                "description": "Update project by ID",
+                "operationId": "update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Pouchao"
+                                    },
+                                    "category": {
+                                        "type": "string",
+                                        "example": "Car-Rental"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Car Rental Booking System"
+                                    },
+                                    "image": {
+                                        "type": "string",
+                                        "example": "https://example.com/image.png"
+                                    },
+                                    "link": {
+                                        "type": "string",
+                                        "example": "https://example.com/project"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Project Updated Successfully"
+                    },
+                    "404": {
+                        "description": "Project Not Found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Delete Project",
+                "description": "Delete project by ID",
+                "operationId": "destroy",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Project Deleted Successfully"
+                    },
+                    "404": {
+                        "description": "Project Not Found"
+                    }
+                }
+            }
+        },
         "/api/roles": {
             "get": {
                 "tags": [
@@ -658,6 +1629,200 @@
                 }
             }
         },
+        "/api/units": {
+            "get": {
+                "tags": [
+                    "Units"
+                ],
+                "summary": "Get Unit List",
+                "description": "Get Unit List as Array",
+                "operationId": "index",
+                "responses": {
+                    "200": {
+                        "description": "Get Unit List as Array"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Units"
+                ],
+                "summary": "Create New Unit",
+                "description": "Create New Unit",
+                "operationId": "store",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Kilogram"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Create New Unit"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            }
+        },
+        "/api/units/view/all": {
+            "get": {
+                "tags": [
+                    "Units"
+                ],
+                "summary": "All units - Publicly Accessible",
+                "description": "All units - Publicly Accessible",
+                "operationId": "indexAll",
+                "parameters": [
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "perPage, eg; 20",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 20
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "All units - Publicly Accessible"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            }
+        },
+        "/api/units/{id}": {
+            "get": {
+                "tags": [
+                    "Units"
+                ],
+                "summary": "Show Unit Details",
+                "description": "Show Unit Details",
+                "operationId": "show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id, eg; 1",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Show Unit Details"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Units"
+                ],
+                "summary": "Update Unit",
+                "description": "Update Unit",
+                "operationId": "update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id, eg; 1",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Updated Kilogram"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update Unit"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Units"
+                ],
+                "summary": "Delete Unit",
+                "description": "Delete Unit",
+                "operationId": "destroy",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id, eg; 1",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete Unit"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            }
+        },
         "/api/users": {
             "get": {
                 "tags": [
@@ -697,6 +1862,10 @@
                                     "email": {
                                         "type": "string",
                                         "example": "john.doe@example.com"
+                                    },
+                                    "mobileNo": {
+                                        "type": "string",
+                                        "example": "017........"
                                     },
                                     "password": {
                                         "type": "string",
@@ -794,37 +1963,7 @@
                     }
                 }
             },
-            "delete": {
-                "tags": [
-                    "Users"
-                ],
-                "summary": "Delete User",
-                "description": "Delete User",
-                "operationId": "destroy",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "id, eg; 1",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Delete User"
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "404": {
-                        "description": "Resource Not Found"
-                    }
-                }
-            },
-            "patch": {
+            "put": {
                 "tags": [
                     "Users"
                 ],
@@ -882,6 +2021,36 @@
                         "description": "Resource Not Found"
                     }
                 }
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Delete User",
+                "description": "Delete User",
+                "operationId": "destroy",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id, eg; 1",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete User"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
             }
         },
         "/": {
@@ -909,8 +2078,5 @@
                 "in": "header"
             }
         }
-    },
-    "security": [
-        []
-    ]
+    }
 }

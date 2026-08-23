@@ -15,6 +15,51 @@ class LeadController extends Controller
         $this->middleware('auth:api', ['except' => ['indexAll']]);
     }
 
+    public function indexAll(Request $request)
+    {
+        try {
+            $perPage = $request->input('per_page', 10);
+            $currentPage = $request->input('page', 1);
+
+            $leads = DB::table('leads')->orderBy('id', 'DESC')->paginate($perPage, ['*'], 'page', $currentPage);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'All Leads Fetched Successfully!',
+                'errors' => null,
+                'data' => $leads->items(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([$e->getMessage(), $e->getLine()]);
+        }
+    }
+
+    public function search(Request $request)
+    {
+        try {
+            $search = $request->input('search');
+            $perPage = $request->input('per_page', 10);
+            $currentPage = $request->input('page', 1);
+
+            $leads = DB::table('leads')
+                ->where('fullName', 'LIKE', '%' . $search . '%')
+                ->orWhere('email', 'LIKE', '%' . $search . '%')
+                ->orWhere('company', 'LIKE', '%' . $search . '%')
+                ->orWhere('title', 'LIKE', '%' . $search . '%')
+                ->orderBy('id', 'DESC')
+                ->paginate($perPage, ['*'], 'page', $currentPage);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Lead Search Results Fetched Successfully!',
+                'errors' => null,
+                'data' => $leads->items(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([$e->getMessage(), $e->getLine()]);
+        }
+    }
+
     public function index(Request $request)
     {
         try {

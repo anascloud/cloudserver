@@ -42,7 +42,7 @@ class UsersController extends Controller
             // Get the current page and the number of items per page from the request, defaulting to 10 items per page
             $perPage = $request->input('per_page', 10);
             $currentPage = $request->input('page', 1);
-    
+
             // Get the status filter from the request
             $status = $request->input('status', null); // Null if no status is provided
 
@@ -57,21 +57,21 @@ class UsersController extends Controller
             // Fetch users with pagination
             $users = $query->paginate($perPage, ['*'], 'page', $currentPage);
 
-    
+
             // Fetch all roles once to minimize database calls
             $roles = DB::table('roles')->pluck('name', 'id')->toArray() ?? [];
-            
+
             // Initialize an array to hold formatted user data
             $formattedData = [];
-    
+
             // Use foreach to iterate over each user
             foreach ($users as $user) {
                 // Decode the roles string to an array of IDs
-                $roleIds = json_decode($user->roles, true);
-    
+                $roleIds = json_decode(optional($user)->roles, true);
+
                 // Initialize an array to hold role names
                 $roleNames = [];
-    
+
                 // Ensure roleIds is an array
                 if (is_array($roleIds)) {
                     // Use foreach to map role IDs to their corresponding names
@@ -89,20 +89,20 @@ class UsersController extends Controller
                     'fullName' => $user->fullName,
                     'email' => $user->email,
                     'mobileNo' => $user->mobileNo,
-                    'country' => $user->country,
-                    'status' => $user->status,
-                    'avatar' => url($user->avatar),
-                    'address' => $user->address,
-                    'roles' => !empty($roleNames) ? implode(', ', $roleNames) : [], // Convert to comma-separated string
+                    'country' => optional($user)->country,
+                    'status' => optional($user)->status,
+                    'avatar' => url(optional($user)->avatar),
+                    'address' => optional($user)->address,
+                    'roles' => !empty($roleName) ? implode(', ', $roleNames) : [], // Convert to comma-separated string
                     'created_at' => $user->created_at, // Include created_at if needed
                     'updated_at' => $user->updated_at, // Include updated_at if needed
                 ];
             }
-    
+
             // Prepare pagination links
             $paginationLinks = [];
             $baseUrl = $request->url();
-            
+
             for ($i = 1; $i <= $users->lastPage(); $i++) {
                 $paginationLinks[] = [
                     'url' => $i == $currentPage ? null : $baseUrl . '?page=' . $i,
@@ -110,7 +110,7 @@ class UsersController extends Controller
                     'active' => $i == $currentPage,
                 ];
             }
-    
+
             // Return the formatted response
             return response()->json([
                 'status' => true,
@@ -154,10 +154,26 @@ class UsersController extends Controller
     public function indexAll(Request $request)
     {
         try {
-            $data = $this->userRepository->getPaginatedData($request->perPage);
-            return $this->responseRepository->ResponseSuccess($data, 'User List Fetched Successfully!');
+            $data = DB::table('users')->orderBy('id', 'desc')->paginate($request->perPage ?? 12);
+            return response()->json(['status' => true, 'message' => 'User List Fetched Successfully!', 'errors' => null, 'data' => $data]);
         } catch (\Exception $e) {
-            return $this->responseRepository->ResponseError(null, $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['status' => false, 'message' => $e->getMessage(), 'errors' => null, 'data' => null], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function search(Request $request)
+    {
+        try {
+            $search = $request->input('search');
+            $perPage = $request->input('perPage', 10);
+            $data = DB::table('users')
+                ->where('fullName', 'like', '%'.$search.'%')
+                ->orWhere('email', 'like', '%'.$search.'%')
+                ->orderBy('id', 'desc')
+                ->paginate($perPage);
+            return response()->json(['status' => true, 'message' => 'User Search Results Fetched Successfully!', 'errors' => null, 'data' => $data]);
+        } catch (\Exception $e) {
+            return response()->json(['status' => false, 'message' => $e->getMessage(), 'errors' => null, 'data' => null], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -193,7 +209,7 @@ class UsersController extends Controller
                 ]);
 
                 if ($validator->fails()) {
-                    return response()->json(['message' => $validator->errors()->first(), 'type' => 'error']); 
+                    return response()->json(['message' => $validator->errors()->first(), 'type' => 'error']);
                 }
 
                 $user = new User();
@@ -212,13 +228,13 @@ class UsersController extends Controller
                     $avatarPath = $image->move(public_path('uploads'), $filename);  // Save to public/uploads
                     $user->avatar = 'uploads/' . $filename; // Store relative path in DB
                 }
-                
+
 
                 $user->save();
 
                 return response()->json(['message' => 'New User Created Successfully.', 'type' => 'success']);
             } catch (\Exception $exception) {
-                return response()->json(['message' => $exception->getMessage(), 'type' => 'error']); 
+                return response()->json(['message' => $exception->getMessage(), 'type' => 'error']);
             }
         }
 
@@ -238,7 +254,7 @@ class UsersController extends Controller
      * )
      */
     public function show($id)
-    {   
+    {
         try {
             // Retrieve the user by ID
             $data = $this->userRepository->getByID($id); // Directly use the User model
@@ -279,12 +295,12 @@ class UsersController extends Controller
      * )
      */
     public function update(Request $request, $id)
-    {   
+    {
         if(!empty($request->status) && !empty($id)){
             $user = User::find($id);
 
             if (!$user) {
-                return response()->json(['message' => 'User not found', 'type' => 'error']); 
+                return response()->json(['message' => 'User not found', 'type' => 'error']);
             }
             $user->status = $request->status;
             $saved = $user->save();
@@ -304,13 +320,13 @@ class UsersController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return response()->json(['message' => $validator->errors()->first(), 'type' => 'error']); 
+                return response()->json(['message' => $validator->errors()->first(), 'type' => 'error']);
             }
 
             $user = User::find($id);
 
             if (!$user) {
-                return response()->json(['message' => 'User not found', 'type' => 'error']); 
+                return response()->json(['message' => 'User not found', 'type' => 'error']);
             }
 
             // Update user info
@@ -327,7 +343,7 @@ class UsersController extends Controller
                 $filename = time() . '.' . $image->getClientOriginalExtension();
                 $avatarPath = $image->move(public_path('uploads'), $filename);  // Save to public/uploads
                 $user->avatar = 'uploads/' . $filename; // Store relative path in DB
-            }        
+            }
 
             // Save the updated user information
             $saved = $user->save();
@@ -339,7 +355,7 @@ class UsersController extends Controller
                 return response()->json(['message' => 'Profile updated Failed', 'type' => 'error']);
             }
         }
-        
+
     }
 
     /**

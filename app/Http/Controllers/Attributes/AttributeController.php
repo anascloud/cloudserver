@@ -37,7 +37,7 @@ class AttributeController extends Controller
         try {
             // Using query builder to fetch all attributes
             $data = DB::table('attributes')->orderBy('id', 'desc')->paginate(10); // Adjust pagination as needed
-            
+
             return $this->responseRepository->ResponseSuccess($data, 'Attribute List Fetched Successfully!');
         } catch (\Exception $e) {
             return $this->responseRepository->ResponseError(null, $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -57,6 +57,20 @@ class AttributeController extends Controller
      *     @OA\Response(response=404, description="Resource Not Found"),
      * )
      */
+    public function search(Request $request)
+    {
+        try {
+            $search = $request->input('search');
+            $perPage = $request->input('perPage', 10);
+            $data = DB::table('attributes')
+                ->where('name', 'LIKE', '%' . $search . '%')
+                ->paginate($perPage);
+            return $this->responseRepository->ResponseSuccess($data, 'Attribute Search Results Fetched Successfully!');
+        } catch (\Exception $e) {
+            return $this->responseRepository->ResponseError(null, $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public function indexAll(Request $request)
     {
         try {
@@ -96,7 +110,7 @@ class AttributeController extends Controller
 
             // Check for validation failures
             if ($validator->fails()) {
-                return response()->json(['message' => $validator->errors()->first(), 'type' => 'error']); 
+                return response()->json(['message' => $validator->errors()->first(), 'type' => 'error']);
             }
 
             // Create a new attribute using the validated data

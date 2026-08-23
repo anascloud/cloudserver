@@ -13,6 +13,15 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\Campaigns\CampaignController;
 use App\Http\Controllers\Leads\LeadController;
 use App\Http\Controllers\Units\UnitController;
+use App\Http\Controllers\Projects\ProjectsController;
+use App\Http\Controllers\SystemController;
+use App\Http\Controllers\FM\CompanyController;
+use App\Http\Controllers\FM\PaymentController;
+use App\Http\Controllers\FM\BankAccountController;
+use App\Http\Controllers\FM\DashboardController;
+use App\Http\Controllers\SCM\FeatureReportController;
+use App\Http\Controllers\CRM\CustomerController;
+use App\Http\Controllers\CRM\AccountReceivableController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,6 +41,14 @@ use Illuminate\Support\Facades\Route;
 Route::group([
     'middleware' => 'api'
 ], function ($router) {
+
+    // Handle CORS preflight for all API routes
+    Route::options('/{any}', function () {
+        return response('', 200)
+            ->header('Access-Control-Allow-Origin', '*')
+            ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS')
+            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, X-XSRF-TOKEN');
+    })->where('any', '.*');
 
     /**
      * Authentication Module
@@ -77,6 +94,11 @@ Route::group([
         Route::resource('category', CategoryController::class);
         Route::get('categories/view/all', [CategoryController::class, 'indexAll']);
         Route::get('categories/view/search', [CategoryController::class, 'search']);
+        Route::resource('attribute', AttributeController::class);
+        Route::get('attributes/view/all', [AttributeController::class, 'indexAll']);
+        Route::get('attributes/view/search', [AttributeController::class, 'search']);
+        Route::resource('customer', CustomerController::class);
+        Route::get('reporting/account-recivable-report', [AccountReceivableController::class, 'index']);
     });
 
     /**
@@ -96,9 +118,7 @@ Route::group([
     /**
      * Attribute Module
      */
-    Route::resource('attributes', AttributeController::class);
-    Route::get('attributes/view/all', [AttributeController::class, 'indexAll']);
-    Route::get('attributes/view/search', [AttributeController::class, 'search']);
+
 
     /**
      * Stock Module
@@ -140,6 +160,81 @@ Route::group([
     Route::post('leads/{id}', [LeadController::class, 'update']);
     Route::get('leads/view/all', [LeadController::class, 'indexAll']);
     Route::get('leads/view/search', [LeadController::class, 'search']);
+
+    /**
+     * Project Module
+     */
+    Route::resource('projects', ProjectsController::class);
+    Route::post('projects/{id}', [ProjectsController::class, 'update']);
+    Route::get('projects/view/all', [ProjectsController::class, 'indexAll']);
+    Route::get('projects/view/search', [ProjectsController::class, 'search']);
+
+    /**
+     * System Module
+     */
+    Route::get('clear', [SystemController::class, 'clear']);
+    Route::get('migrate', [SystemController::class, 'migrate']);
+    Route::get('migrate-fresh', [SystemController::class, 'migrateFresh']);
+
+    /**
+     * FMS - Company Module
+     */
+    Route::prefix('fm/company')->group(function () {
+        Route::get('get-all-company', [CompanyController::class, 'indexAll']);
+        Route::get('{id}', [CompanyController::class, 'show']);
+        Route::post('add-company', [CompanyController::class, 'store']);
+        Route::post('update-company', [CompanyController::class, 'update']);
+        Route::get('delete-company/{id}', [CompanyController::class, 'destroy']);
+        Route::delete('delete-companies', [CompanyController::class, 'bulkDelete']);
+    });
+
+    /**
+     * FMS - Payment Module
+     */
+    Route::prefix('fm/payment')->group(function () {
+        Route::get('get-all-payments', [PaymentController::class, 'indexAll']);
+        Route::get('{id}', [PaymentController::class, 'show']);
+        Route::post('add-payment', [PaymentController::class, 'store']);
+        Route::post('update-payment', [PaymentController::class, 'update']);
+        Route::get('delete-payment/{id}', [PaymentController::class, 'destroy']);
+        Route::delete('delete-payments', [PaymentController::class, 'bulkDelete']);
+    });
+
+    /**
+     * FMS - Bank Account Module
+     */
+    Route::prefix('fm/bankaccount')->group(function () {
+        Route::get('get-all-bank-account', [BankAccountController::class, 'indexAll']);
+        Route::get('{id}', [BankAccountController::class, 'show']);
+        Route::post('add-bank-account', [BankAccountController::class, 'store']);
+        Route::post('update-bank-account', [BankAccountController::class, 'update']);
+        Route::get('delete-bank-account/{id}', [BankAccountController::class, 'destroy']);
+        Route::delete('delete-bank-accounts', [BankAccountController::class, 'bulkDelete']);
+    });
+
+    /**
+     * FMS - Dashboard Module
+     */
+    Route::prefix('fm/dashboard')->group(function () {
+        Route::get('get-top-company-income-report', [DashboardController::class, 'getTopCompanyIncome']);
+        Route::get('get-company-wise-profit-report', [DashboardController::class, 'getCompanyWiseProfit']);
+        Route::get('top-bank-accounts-with-history', [DashboardController::class, 'getTopBankAccountsWithHistory']);
+        Route::get('cash-flow', [DashboardController::class, 'getCashFlow']);
+    });
+
+    /**
+     * SCM - Feature Reports Module
+     */
+    Route::prefix('scm/v1/feature-report')->group(function () {
+        Route::get('accounts-payable-report', [FeatureReportController::class, 'getAccountPayableReport']);
+    });
+
+    /**
+     * Fallback - catch all undefined API routes
+     */
+    Route::fallback(function () {
+        return response()->json(['message' => 'Route Not Found', 'type' => 'error'], 404);
+    });
 
 });
 
