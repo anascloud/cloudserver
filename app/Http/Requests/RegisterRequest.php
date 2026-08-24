@@ -15,7 +15,7 @@ class RegisterRequest extends FormRequest
     public function rules()
     {
         return [
-            'fullName' => 'required|string|max:255',
+            'firstName' => 'required|string|max:255',
             'mobileNo' => 'required|numeric|digits_between:10,15',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8|confirmed', // The "confirmed" rule automatically checks the password_confirmation field
@@ -39,8 +39,8 @@ class RegisterRequest extends FormRequest
     public function messages()
     {
         return [
-            'fullName.required' => 'Please give your name',
-            'fullName.max' => 'Please give your name between 50 characters',
+            'firstName.required' => 'Please give your name',
+            'firstName.max' => 'Please give your name between 50 characters',
             'email.required' => 'Please give your email',
             'email.unique' => 'User already exists by this email, please try with another email.',
             'password.required' => 'Please give your password',

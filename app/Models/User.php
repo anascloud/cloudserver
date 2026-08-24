@@ -19,10 +19,16 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'fullName',
+        'firstName',
+        'lastName',
         'mobileNo',
         'email',
         'password',
+        'roles',
+        'country',
+        'address',
+        'avatar',
+        'status',
     ];
 
     /**
@@ -66,7 +72,7 @@ class User extends Authenticatable implements JWTSubject
 
     /**
      * Products
-     * 
+     *
      * Get All products uploaded by user
      *
      * @return array Products

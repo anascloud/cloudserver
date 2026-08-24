@@ -74,7 +74,7 @@ class AuthController extends Controller
         }
     }
 
-    
+
 
     /**
      * @OA\POST(
@@ -85,7 +85,7 @@ class AuthController extends Controller
      *     @OA\RequestBody(
      *          @OA\JsonContent(
      *              type="object",
-     *              @OA\Property(property="fullName", type="string", example="Jhon Doe"),
+     *              @OA\Property(property="firstName", type="string", example="Jhon Doe"),
      *              @OA\Property(property="email", type="string", example="jhondoe@example.com"),
      *              @OA\Property(property="password", type="string", example="123456"),
      *              @OA\Property(property="password_confirmation", type="string", example="123456")
@@ -101,7 +101,7 @@ class AuthController extends Controller
 {
     try {
         // Extract the correct fields from the request
-        $requestData = $request->only('fullName', 'mobileNo', 'email', 'password');
+        $requestData = $request->only('firstName', 'mobileNo', 'email', 'password');
 
         // Check if the user already exists by email
         $existingUser = User::where('email', $requestData['email'])->first();
@@ -112,7 +112,7 @@ class AuthController extends Controller
 
         // Create new user instance
         $user = new User();
-        $user->fullName = $requestData['fullName'];
+        $user->firstName = $requestData['firstName'];
         $user->mobileNo = $requestData['mobileNo'];
         $user->email = $requestData['email'];
         $user->password = bcrypt($requestData['password']); // Hash the password
@@ -132,7 +132,7 @@ class AuthController extends Controller
         return $this->responseRepository->ResponseError(null, $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
-       
+
 
 
     /**
@@ -223,7 +223,7 @@ class AuthController extends Controller
             'expires_in' => $this->guard()->factory()->getTTL() * 60 * 24 * 30, // 2592000 Seconds = 30 Days
             'user' => [
                 'id' => $user->id,
-                'fullName' => $user->fullName,
+                'firstName' => $user->firstName,
                 'mobileNo' => $user->mobileNo,
                 'email' => $user->email,
                 'email_verified_at' => $user->email_verified_at,
@@ -317,7 +317,7 @@ class AuthController extends Controller
      * )
      */
     public function resetPassword(Request $request)
-    {   
+    {
         // Validate the incoming request
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|exists:users,email',
@@ -348,7 +348,7 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Password reset successfully.', 'type' => 'success']);
     }
-    
+
     public function profileResetPassword(Request $request)
     {
         // Validate the incoming request

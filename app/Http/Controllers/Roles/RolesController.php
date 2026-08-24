@@ -40,19 +40,16 @@ class RolesController extends Controller
      public function index(Request $request)
     {
         try {
-            $perPage = $request->input('params.pageSize', 10);
-            $currentPage = $request->input('params.pageIndex', 1);
-
-            // Ensure $currentPage starts at 1 (adjust if necessary)
-            $currentPage = max(1, $currentPage + 1);
+            $perPage = $request->input('pageSize', 10);
+            $currentPage = max(1, (int) $request->input('page', 1));
 
             $roles = DB::table('roles')->orderBy('id', 'DESC')->paginate($perPage, ['*'], 'page', $currentPage);
 
             $permissions = DB::table('permissions')->pluck('name', 'id')->toArray();
 
             $formattedData = $roles->getCollection()->map(function ($role) use ($permissions) {
-                // Decode the permissions JSON and ensure it's an array or default to an empty array
-                $permissionIds = is_array(json_decode($role->permissions, true)) ? json_decode($role->permissions, true) : [];
+                // Permissions are stored as comma-separated IDs (e.g. "1,2,3")
+                $permissionIds = array_filter(array_map('intval', explode(',', (string) $role->permissions)));
 
                 $permissionNames = [];
                 foreach ($permissionIds as $id) {

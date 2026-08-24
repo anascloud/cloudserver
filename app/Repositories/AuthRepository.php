@@ -9,8 +9,8 @@ class AuthRepository{
 
     public function register(array $data){
         $data = [
-            'fullName' => $data['fullName'],
-            'mobileNo' => $data['mobileNo'],
+            'firstName' => $data['firstName'],
+            'phoneNumber' => $data['phoneNumber'],
             'email' => $data['email'],
             'password' => Hash::make($data['password'])
         ];

@@ -9,7 +9,7 @@ class UserRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:255',
+            'firstName' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email' . ($this->method() === 'PUT' ? ',' . $this->route('id') : ''),
             'password' => 'required|string|min:6|confirmed',
             'roles' => 'nullable|array',

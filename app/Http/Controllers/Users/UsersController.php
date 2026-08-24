@@ -86,16 +86,17 @@ class UsersController extends Controller
                 }
                 $formattedData[] = [
                     'id' => $user->id,
-                    'fullName' => $user->fullName,
+                    'firstName' => $user->firstName,
+                    'lastName' => optional($user)->lastName,
                     'email' => $user->email,
-                    'mobileNo' => $user->mobileNo,
+                    'phoneNumber' => $user->phoneNumber,
                     'country' => optional($user)->country,
                     'status' => optional($user)->status,
                     'avatar' => url(optional($user)->avatar),
                     'address' => optional($user)->address,
-                    'roles' => !empty($roleName) ? implode(', ', $roleNames) : [], // Convert to comma-separated string
-                    'created_at' => $user->created_at, // Include created_at if needed
-                    'updated_at' => $user->updated_at, // Include updated_at if needed
+                    'roles' => !empty($roleNames) ? implode(', ', $roleNames) : [],
+                    'created_at' => $user->created_at,
+                    'updated_at' => $user->updated_at,
                 ];
             }
 
@@ -167,7 +168,7 @@ class UsersController extends Controller
             $search = $request->input('search');
             $perPage = $request->input('perPage', 10);
             $data = DB::table('users')
-                ->where('fullName', 'like', '%'.$search.'%')
+                ->where('firstName', 'like', '%'.$search.'%')
                 ->orWhere('email', 'like', '%'.$search.'%')
                 ->orderBy('id', 'desc')
                 ->paginate($perPage);
@@ -202,9 +203,13 @@ class UsersController extends Controller
         {
             try {
                 $validator = Validator::make($request->all(), [
-                    'fullName' => 'required|string|max:255',
+                    'firstName' => 'required|string|max:255',
+                    'lastName' => 'nullable|string|max:255',
                     'email' => 'required|email|max:255|unique:users,email',
-                    'mobileNo' => 'required|string|max:20',
+                    'phoneNumber' => 'required|string|max:20',
+                    'country' => 'required|integer',
+                    'roleIds' => 'required|array|min:1',
+                    'roleIds.*' => 'integer',
                     'avatar' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048',
                 ]);
 
@@ -213,22 +218,22 @@ class UsersController extends Controller
                 }
 
                 $user = new User();
-                $user->fullName = $request->fullName;
+                $user->firstName = $request->firstName;
+                $user->lastName = $request->lastName;
                 $user->email = $request->email;
-                $user->mobileNo = $request->mobileNo;
+                $user->phoneNumber = $request->phoneNumber;
                 $user->country = $request->country;
                 $user->address = $request->address;
                 $user->password = bcrypt($request->password);
-                $user->roles = $request->roles; // Store as JSON
+                $user->roles = json_encode($request->roleIds);
                 $user->status = "Active";
 
                 if ($request->hasFile('avatar')) {
                     $image = $request->file('avatar');
                     $filename = time() . '.' . $image->getClientOriginalExtension();
-                    $avatarPath = $image->move(public_path('uploads'), $filename);  // Save to public/uploads
-                    $user->avatar = 'uploads/' . $filename; // Store relative path in DB
+                    $avatarPath = $image->move(public_path('uploads'), $filename);
+                    $user->avatar = 'uploads/' . $filename;
                 }
-
 
                 $user->save();
 
@@ -296,6 +301,8 @@ class UsersController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // return 'ok'; // return ok
+        // return response()->json($request->all()); // return []
         if(!empty($request->status) && !empty($id)){
             $user = User::find($id);
 
@@ -313,9 +320,13 @@ class UsersController extends Controller
             }
         }else{
             $validator = Validator::make($request->all(), [
-                'fullName' => 'required|string|max:255',
-                // 'email' => 'required|email|max:255|unique:users,email,' . $id, // This allows the current email to remain unchanged
-                'mobileNo' => 'required|string|max:20',
+                'firstName' => 'required|string|max:255',
+                'lastName' => 'nullable|string|max:255',
+                'email' => 'required|email|max:255',
+                'phoneNumber' => 'required|string|max:20',
+                'country' => 'required|integer',
+                'roleIds' => 'required|array|min:1',
+                'roleIds.*' => 'integer',
                 'avatar' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048',
             ]);
 
@@ -329,20 +340,20 @@ class UsersController extends Controller
                 return response()->json(['message' => 'User not found', 'type' => 'error']);
             }
 
-            // Update user info
-            $user->fullName = $request->fullName;
-            // $user->email = $request->email;
-            $user->mobileNo = $request->mobileNo;
+            $user->firstName = $request->firstName;
+            $user->lastName = $request->lastName;
+            $user->email = $request->email;
+            $user->phoneNumber = $request->phoneNumber;
             $user->country = $request->country;
             $user->address = $request['address'];
-            $user->roles = $request->roles;
+            $user->roles = json_encode($request->roleIds);
 
             // Handle avatar upload
             if ($request->hasFile('avatar')) {
                 $image = $request->file('avatar');
                 $filename = time() . '.' . $image->getClientOriginalExtension();
-                $avatarPath = $image->move(public_path('uploads'), $filename);  // Save to public/uploads
-                $user->avatar = 'uploads/' . $filename; // Store relative path in DB
+                $avatarPath = $image->move(public_path('uploads'), $filename);
+                $user->avatar = 'uploads/' . $filename;
             }
 
             // Save the updated user information
