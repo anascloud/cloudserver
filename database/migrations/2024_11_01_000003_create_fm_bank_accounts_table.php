@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('iban')->nullable();
             $table->string('swift_code')->nullable();
             $table->unsignedBigInteger('currency_id')->nullable();
-            $table->string('currency_name')->nullable();
+            $table->string('currencyName')->nullable();
             $table->decimal('opening_balance', 15, 2)->default(0);
             $table->decimal('current_balance', 15, 2)->default(0);
             $table->unsignedBigInteger('company_id')->nullable();

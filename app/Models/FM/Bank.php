@@ -9,6 +9,6 @@ class Bank extends Model
 {
     use HasFactory;
 
-    protected $fm_banks = 'fm_banks';
-    protected $ = ["bank_name","bank_website","swift_code","routing_number","contact_number"];
+    protected $table = 'fm_banks';
+    protected $fillable = ["bank_name","bank_website","swift_code","routing_number","contact_number"];
 }

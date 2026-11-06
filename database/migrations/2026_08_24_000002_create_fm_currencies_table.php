@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('fm_currencies', function (Blueprint $table) {
             $table->id();
-            $table->string('currency_name');
+            $table->string('currencyName');
             $table->string('symbol')->nullable();
             $table->string('fraction')->nullable();
             $table->string('units')->nullable();

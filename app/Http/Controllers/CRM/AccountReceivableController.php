@@ -123,7 +123,7 @@ class AccountReceivableController extends Controller
                 return [
                     'id' => $payment->id,
                     'customer' => $payment->party_name ?? $payment->company_name ?? 'N/A',
-                    'invoiceNo' => $payment->payment_no ?? $payment->reference_number ?? '',
+                    'invoice_no' => $payment->payment_no ?? $payment->reference_number ?? '',
                     'invoiceDate' => $payment->posting_date ? date('Y-m-d', strtotime($payment->posting_date)) : '',
                     'advancedAmount' => $advancedAmount,
                     'invoicedAmount' => $invoicedAmount,

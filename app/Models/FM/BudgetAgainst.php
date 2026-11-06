@@ -9,6 +9,6 @@ class BudgetAgainst extends Model
 {
     use HasFactory;
 
-    protected $fm_budget_againsts = 'fm_budget_againsts';
-    protected $ = ["budget_against_name"];
+    protected $table = 'fm_budget_againsts';
+    protected $fillable = ["budget_against_name"];
 }

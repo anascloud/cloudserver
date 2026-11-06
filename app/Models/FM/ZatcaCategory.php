@@ -9,6 +9,6 @@ class ZatcaCategory extends Model
 {
     use HasFactory;
 
-    protected $fm_zatca_categories = 'fm_zatca_categories';
-    protected $ = ["zatca_category_name"];
+    protected $table = 'fm_zatca_categories';
+    protected $fillable = ["zatca_category_name"];
 }

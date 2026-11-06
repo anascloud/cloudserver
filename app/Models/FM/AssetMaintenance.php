@@ -9,8 +9,8 @@ class AssetMaintenance extends Model
 {
     use HasFactory;
 
-    protected $fm_asset_maintenances = 'fm_asset_maintenances';
-    protected $ = ["asset_maintenance_serial_number","asset_id","company_id","comments"];
+    protected $table = 'fm_asset_maintenances';
+    protected $fillable = ["asset_maintenance_serial_number","asset_id","company_id","comments"];
 
     public function details()
     {

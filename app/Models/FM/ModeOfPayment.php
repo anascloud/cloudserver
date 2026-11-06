@@ -9,6 +9,6 @@ class ModeOfPayment extends Model
 {
     use HasFactory;
 
-    protected $fm_mode_of_payments = 'fm_mode_of_payments';
-    protected $ = ["mode_of_payment_name","mode_of_payment_type","company_id","chart_of_account_id","is_active","comment"];
+    protected $table = 'fm_mode_of_payments';
+    protected $fillable = ["mode_of_payment_name","mode_of_payment_type","company_id","chart_of_account_id","is_active","comment"];
 }

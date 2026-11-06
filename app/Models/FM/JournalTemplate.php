@@ -9,8 +9,8 @@ class JournalTemplate extends Model
 {
     use HasFactory;
 
-    protected $fm_journal_templates = 'fm_journal_templates';
-    protected $ = ["journal_template_title","company_id","journal_type_id"];
+    protected $table = 'fm_journal_templates';
+    protected $fillable = ["journal_template_title","company_id","journal_type_id"];
 
     public function details()
     {

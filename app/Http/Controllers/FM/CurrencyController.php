@@ -22,7 +22,7 @@ class CurrencyController extends Controller
             $query = Currency::query();
 
             if ($search) {
-                $query->where('currency_name', 'LIKE', "%{$search}%");
+                $query->where('currencyName', 'LIKE', "%{$search}%");
             }
 
             $items = $query->orderBy('id', 'DESC')->paginate($pageSize);
@@ -86,12 +86,12 @@ class CurrencyController extends Controller
     {
         try {
             $validated = $request->validate([
-                'currency_name' => 'sometimes|required_without:currencyName|string|max:255',
-                'currencyName' => 'sometimes|required_without:currency_name|string|max:255',
+                'currencyName' => 'sometimes|required_without:currencyName|string|max:255',
+                'currencyName' => 'sometimes|required_without:currencyName|string|max:255',
             ]);
 
             $data = [
-                'currency_name' => $request->input('currency_name') ?? $request->input('currencyName'),
+                'currencyName' => $request->input('currencyName') ?? $request->input('currencyName'),
             ];
 
             $item = Currency::create($data);
@@ -116,13 +116,13 @@ class CurrencyController extends Controller
     {
         try {
             $validated = $request->validate([
-                'currency_name' => 'sometimes|required_without:currencyName|string|max:255',
-                'currencyName' => 'sometimes|required_without:currency_name|string|max:255',
+                'currencyName' => 'sometimes|required_without:currencyName|string|max:255',
+                'currencyName' => 'sometimes|required_without:currencyName|string|max:255',
             ]);
 
             $item = Currency::findOrFail($request->id);
             $data = [
-                'currency_name' => $request->input('currency_name') ?? $request->input('currencyName'),
+                'currencyName' => $request->input('currencyName') ?? $request->input('currencyName'),
             ];
 
             $item->update($data);

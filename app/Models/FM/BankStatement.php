@@ -9,8 +9,8 @@ class BankStatement extends Model
 {
     use HasFactory;
 
-    protected $fm_bank_statements = 'fm_bank_statements';
-    protected $ = ["company_id","bank_account_id","currency_id","bs_file"];
+    protected $table = 'fm_bank_statements';
+    protected $fillable = ["company_id","bank_account_id","currency_id","bs_file"];
 
     public function details()
     {

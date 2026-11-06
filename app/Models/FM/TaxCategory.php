@@ -9,6 +9,6 @@ class TaxCategory extends Model
 {
     use HasFactory;
 
-    protected $fm_tax_categories = 'fm_tax_categories';
-    protected $ = ["tax_category_name","zatca_category_id","is_active"];
+    protected $table = 'fm_tax_categories';
+    protected $fillable = ["tax_category_name","zatca_category_id","is_active"];
 }

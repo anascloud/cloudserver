@@ -9,6 +9,6 @@ class TermsAndConditions extends Model
 {
     use HasFactory;
 
-    protected $fm_terms_and_conditions = 'fm_terms_and_conditions';
-    protected $ = ["terms_and_condition_name","is_disabled","is_selling","is_buying","description","is_active","is_deleted"];
+    protected $table = 'fm_terms_and_conditions';
+    protected $fillable = ["terms_and_condition_name","is_disabled","is_selling","is_buying","description","is_active","is_deleted"];
 }

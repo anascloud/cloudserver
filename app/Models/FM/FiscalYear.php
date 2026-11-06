@@ -9,6 +9,6 @@ class FiscalYear extends Model
 {
     use HasFactory;
 
-    protected $fm_fiscal_years = 'fm_fiscal_years';
-    protected $ = ["year_range","start_date","end_date"];
+    protected $table = 'fm_fiscal_years';
+    protected $fillable = ["year_range","start_date","end_date"];
 }

@@ -9,6 +9,6 @@ class Currency extends Model
 {
     use HasFactory;
 
-    protected $fm_currencies = 'fm_currencies';
-    protected $ = ["currency_name","symbol","fraction","units","small_value","number_format"];
+    protected $table = 'fm_currencies';
+    protected $fillable = ["currencyName","symbol","fraction","units","small_value","number_format"];
 }

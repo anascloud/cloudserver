@@ -9,6 +9,6 @@ class JournalEntryType extends Model
 {
     use HasFactory;
 
-    protected $fm_journal_entry_types = 'fm_journal_entry_types';
-    protected $ = ["journal_type_name"];
+    protected $table = 'fm_journal_entry_types';
+    protected $fillable = ["journal_type_name"];
 }

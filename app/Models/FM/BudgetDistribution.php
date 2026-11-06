@@ -9,8 +9,8 @@ class BudgetDistribution extends Model
 {
     use HasFactory;
 
-    protected $fm_budget_distributions = 'fm_budget_distributions';
-    protected $ = ["budget_distribution_name"];
+    protected $table = 'fm_budget_distributions';
+    protected $fillable = ["budget_distribution_name"];
 
     public function details()
     {

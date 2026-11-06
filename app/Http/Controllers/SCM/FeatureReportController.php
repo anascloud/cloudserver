@@ -106,7 +106,7 @@ class FeatureReportController extends Controller
                     'party' => $payment->party_name ?? $payment->company_name ?? 'N/A',
                     'currency' => (string) ($payment->currency_id ?? $payment->from_currency_id ?? ''),
                     'payableAccount' => (string) ($payment->default_payable_account_id ?? $payment->account_paid_to_id ?? ''),
-                    'invoiceNo' => $payment->payment_no ?? $payment->reference_number ?? '',
+                    'invoice_no' => $payment->payment_no ?? $payment->reference_number ?? '',
                     'invoiceDate' => $payment->posting_date ? date('Y-m-d', strtotime($payment->posting_date)) : '',
                     'dueDate' => $payment->reference_date ? date('Y-m-d', strtotime($payment->reference_date)) : '',
                     'advancedAmount' => $advancedAmount,

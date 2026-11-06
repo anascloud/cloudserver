@@ -9,6 +9,6 @@ class AssetLocation extends Model
 {
     use HasFactory;
 
-    protected $fm_asset_locations = 'fm_asset_locations';
-    protected $ = ["asset_location_name"];
+    protected $table = 'fm_asset_locations';
+    protected $fillable = ["asset_location_name"];
 }

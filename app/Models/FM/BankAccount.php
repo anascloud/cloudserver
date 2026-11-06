@@ -14,7 +14,7 @@ class BankAccount extends Model
     protected $fillable = [
         'bank_account_name', 'bank_account_type_id', 'bank_account_type_name',
         'bank_id', 'bank_name', 'account_number', 'iban', 'swift_code',
-        'currency_id', 'currency_name', 'opening_balance', 'current_balance',
+        'currency_id', 'currencyName', 'opening_balance', 'current_balance',
         'company_id', 'is_default', 'is_disabled',
     ];
 
