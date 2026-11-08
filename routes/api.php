@@ -55,6 +55,7 @@ use App\Http\Controllers\FM\DashboardController;
 use App\Http\Controllers\SCM\FeatureReportController;
 use App\Http\Controllers\CRM\CustomerController;
 use App\Http\Controllers\CRM\AccountReceivableController;
+use App\Http\Controllers\Tasks\TasksController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -131,6 +132,7 @@ Route::group([
         Route::get('attributes/view/all', [AttributeController::class, 'indexAll']);
         Route::get('attributes/view/search', [AttributeController::class, 'search']);
         Route::resource('customer', CustomerController::class);
+        Route::resource('tasks', TasksController::class);
         Route::get('reporting/account-recivable-report', [AccountReceivableController::class, 'index']);
 
         /**
@@ -140,6 +142,22 @@ Route::group([
         Route::post('products/{id}', [ProductsController::class, 'update']);
         Route::get('products/view/all', [ProductsController::class, 'indexAll']);
         Route::get('products/view/search', [ProductsController::class, 'search']);
+
+        /**
+         * Campaign Module
+         */
+        Route::resource('campaign', CampaignController::class);
+        Route::post('campaign/{id}', [CampaignController::class, 'update']);
+        Route::get('campaign/view/all', [CampaignController::class, 'indexAll']);
+        Route::get('campaign/view/search', [CampaignController::class, 'search']);
+
+        /**
+         * Lead Module
+         */
+        Route::resource('lead', LeadController::class);
+        Route::post('lead/{id}', [LeadController::class, 'update']);
+        Route::get('lead/view/all', [LeadController::class, 'indexAll']);
+        Route::get('lead/view/search', [LeadController::class, 'search']);
     });
 
     /**
@@ -175,23 +193,6 @@ Route::group([
     // Route::resource('feedbacks', FeedbacksController::class);
     // Route::get('feedbacks/view/all', [FeedbacksController::class, 'indexAll']);
     // Route::get('feedbacks/view/search', [FeedbacksController::class, 'search']);
-
-
-    /**
-     * Campaign Module
-     */
-    Route::resource('campaigns', CampaignController::class);
-    Route::post('campaigns/{id}', [CampaignController::class, 'update']);
-    Route::get('campaigns/view/all', [CampaignController::class, 'indexAll']);
-    Route::get('campaigns/view/search', [CampaignController::class, 'search']);
-
-    /**
-     * Lead Module
-     */
-    Route::resource('leads', LeadController::class);
-    Route::post('leads/{id}', [LeadController::class, 'update']);
-    Route::get('leads/view/all', [LeadController::class, 'indexAll']);
-    Route::get('leads/view/search', [LeadController::class, 'search']);
 
     /**
      * Project Module
@@ -648,6 +649,8 @@ Route::group([
     Route::prefix('scm/v1/feature-report')->group(function () {
         Route::get('accounts-payable-report', [FeatureReportController::class, 'getAccountPayableReport']);
     });
+
+    require base_path('routes/crud.php');
 
     /**
      * Fallback - catch all undefined API routes

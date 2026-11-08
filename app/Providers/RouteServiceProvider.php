@@ -37,6 +37,15 @@ class RouteServiceProvider extends ServiceProvider
     {
         $this->configureRateLimiting();
 
+        Route::macro('apiCrud', function ($uri, $controller) {
+            Route::delete($uri . '/bulk', [$controller, 'bulkDelete']);
+            Route::get($uri, [$controller, 'indexAll']);
+            Route::get($uri . '/{id}', [$controller, 'show']);
+            Route::post($uri, [$controller, 'store']);
+            Route::match(['put', 'patch'], $uri . '/{id}', [$controller, 'update']);
+            Route::delete($uri . '/{id}', [$controller, 'destroy']);
+        });
+
         $this->routes(function () {
             Route::prefix('api')
                 ->middleware('api')

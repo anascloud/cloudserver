@@ -2,205 +2,46 @@
 
 namespace App\Http\Controllers\FM;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\ApiCrudController;
 use App\Models\FM\BankReconciliation;
 use Illuminate\Http\Request;
 
-class BankReconciliationController extends Controller
+class BankReconciliationController extends ApiCrudController
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api', ['except' => ['indexAll']]);
-    }
+    protected $model = BankReconciliation::class;
 
-    public function indexAll(Request $request)
-    {
-        try {
-            $pageSize = $request->input('pageSize', $request->input('per_page', 10));
-            $search = $request->input('search', '');
+    protected $resource = 'BankReconciliation';
 
-            $query = BankReconciliation::query();
+    protected $resourcePlural = 'BankReconciliations';
 
-            if ($search) {
-                $query->where('id', 'LIKE', "%{$search}%");
-            }
+    protected $searchable = ['id'];
 
-            $companyId = $request->input('companyId');
-            if ($companyId) {
-                $query->where('company_id', $companyId);
-            }
+    protected $filters = ['companyId' => 'company_id'];
 
-            $items = $query->orderBy('id', 'DESC')->paginate($pageSize);
-
-            return response()->json([
-                'status' => true,
-                'message' => 'BankReconciliations fetched successfully!',
-                'errors' => null,
-                'data' => [
-                    'current_page' => $items->currentPage(),
-                    'data' => $items->items(),
-                    'first_page_url' => $items->url(1),
-                    'from' => $items->firstItem(),
-                    'last_page' => $items->lastPage(),
-                    'last_page_url' => $items->url($items->lastPage()),
-                    'next_page_url' => $items->nextPageUrl(),
-                    'path' => $request->url(),
-                    'per_page' => $items->perPage(),
-                    'prev_page_url' => $items->previousPageUrl(),
-                    'to' => $items->lastItem(),
-                    'total' => $items->total(),
-                ],
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage(),
-                'errors' => null,
-                'data' => null,
-            ], 500);
-        }
-    }
-
-    public function index(Request $request)
-    {
-        return $this->indexAll($request);
-    }
-
-    public function show($id)
-    {
-        try {
-            $item = BankReconciliation::findOrFail($id);
-
-            return response()->json([
-                'status' => true,
-                'message' => 'BankReconciliation fetched successfully!',
-                'errors' => null,
-                'data' => $item,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'BankReconciliation not found',
-                'errors' => null,
-                'data' => null,
-            ], 404);
-        }
-    }
-
-    public function store(Request $request)
-    {
-        try {
-            $item = BankReconciliation::create($request->all());
-
-
-            return response()->json([
-                'status' => true,
-                'message' => 'BankReconciliation created successfully!',
-                'errors' => null,
-                'data' => $item,
-            ], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage(),
-                'errors' => null,
-                'data' => null,
-            ], 422);
-        }
-    }
-
-    public function update(Request $request)
-    {
-        try {
-            $item = BankReconciliation::findOrFail($request->id);
-            $item->update($request->all());
-
-
-            return response()->json([
-                'status' => true,
-                'message' => 'BankReconciliation updated successfully!',
-                'errors' => null,
-                'data' => $item,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage(),
-                'errors' => null,
-                'data' => null,
-            ], 422);
-        }
-    }
-
-    public function destroy($id)
-    {
-        try {
-            $item = BankReconciliation::findOrFail($id);
-            $item->delete();
-
-            return response()->json([
-                'status' => true,
-                'message' => 'BankReconciliation deleted successfully!',
-                'errors' => null,
-                'data' => null,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage(),
-                'errors' => null,
-                'data' => null,
-            ], 500);
-        }
-    }
-
-    public function bulkDelete(Request $request)
-    {
-        try {
-            $ids = $request->all();
-            BankReconciliation::whereIn('id', $ids)->delete();
-
-            return response()->json([
-                'status' => true,
-                'message' => 'BankReconciliations deleted successfully!',
-                'errors' => null,
-                'data' => null,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage(),
-                'errors' => null,
-                'data' => null,
-            ], 500);
-        }
-    }
+    protected $useRequestAll = true;
 
     public function getUnreconciledTransactions(Request $request)
     {
         try {
-            $bankAccountId = $request->input('bankAccountId');
-            $companyId = $request->input('companyId');
-            $fromDate = $request->input('fromDate');
-            $toDate = $request->input('toDate');
-
             $query = \App\Models\FM\BankTransaction::where('status', '!=', 'Reconciled');
 
-            if ($bankAccountId) {
-                $query->where('bank_account_id', $bankAccountId);
+            if ($request->filled('bankAccountId')) {
+                $query->where('bank_account_id', $request->input('bankAccountId'));
             }
-            if ($companyId) {
-                $query->where('company_id', $companyId);
+
+            if ($request->filled('companyId')) {
+                $query->where('company_id', $request->input('companyId'));
             }
-            if ($fromDate) {
-                $query->where('transaction_date', '>=', $fromDate);
+
+            if ($request->filled('fromDate')) {
+                $query->where('transaction_date', '>=', $request->input('fromDate'));
             }
-            if ($toDate) {
-                $query->where('transaction_date', '<=', $toDate);
+
+            if ($request->filled('toDate')) {
+                $query->where('transaction_date', '<=', $request->input('toDate'));
             }
 
             $transactions = $query->orderBy('transaction_date', 'DESC')->get();
-
             $closingBalance = $transactions->sum('deposit') - $transactions->sum('withdraw');
 
             return response()->json([
@@ -226,10 +67,10 @@ class BankReconciliationController extends Controller
     {
         try {
             $transaction = \App\Models\FM\BankTransaction::findOrFail($id);
-
             $entries = $request->input('entries', []);
-            foreach ($entries as $entry) {
-                $transaction->details()->create($entry);
+
+            if (is_array($entries) && !empty($entries)) {
+                $this->insertDetails($transaction, $entries);
             }
 
             $transaction->update(['status' => 'Reconciled']);
@@ -253,16 +94,14 @@ class BankReconciliationController extends Controller
     public function getUnreconciledPayments(Request $request)
     {
         try {
-            $companyId = $request->input('companyId');
-            $bankAccountId = $request->input('companyBankAccountId');
-
             $query = \App\Models\FM\Payment::where('payment_status', '!=', 'Reconciled');
 
-            if ($companyId) {
-                $query->where('company_id', $companyId);
+            if ($request->filled('companyId')) {
+                $query->where('company_id', $request->input('companyId'));
             }
-            if ($bankAccountId) {
-                $query->where('company_bank_account_id', $bankAccountId);
+
+            if ($request->filled('companyBankAccountId')) {
+                $query->where('company_bank_account_id', $request->input('companyBankAccountId'));
             }
 
             $payments = $query->orderBy('posting_date', 'DESC')->get();
