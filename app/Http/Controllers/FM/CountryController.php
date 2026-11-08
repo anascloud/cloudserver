@@ -16,8 +16,8 @@ class CountryController extends ApiCrudController
     protected $searchable = ['country_name', 'country_code'];
 
     protected $rules = [
-        'countryName' => 'required|string|max:255',
-        'countryCode' => 'nullable|string|max:10',
+        'country_name' => 'required|string|max:255',
+        'country_code' => 'nullable|string|max:10',
         'dateFormat' => 'nullable|string|max:50',
         'timeFormat' => 'nullable|string|max:50',
         'timeZone' => 'nullable|string|max:100',

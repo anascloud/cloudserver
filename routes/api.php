@@ -8,6 +8,7 @@ use App\Http\Controllers\Products\ProductsController;
 use App\Http\Controllers\Roles\RolesController;
 use App\Http\Controllers\Permissions\PermissionsController;
 use App\Http\Controllers\Opportunity\OpportunityController;
+use App\Http\Controllers\Quotation\QuotationController;
 use App\Http\Controllers\Stocks\StocksController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\Campaigns\CampaignController;
@@ -166,6 +167,14 @@ Route::group([
         Route::post('opportunity/{id}', [OpportunityController::class, 'update']);
         Route::get('opportunity/view/all', [OpportunityController::class, 'indexAll']);
         Route::get('opportunity/view/search', [OpportunityController::class, 'search']);
+
+        /**
+         * quotation Module
+         */
+        Route::resource('quotation', QuotationController::class);
+        Route::post('quotation/{id}', [QuotationController::class, 'update']);
+        Route::get('quotation/view/all', [QuotationController::class, 'indexAll']);
+        Route::get('quotation/view/search', [QuotationController::class, 'search']);
     });
 
     /**
