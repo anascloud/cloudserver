@@ -12,19 +12,19 @@ class Product extends Model
         'name',             // Product name
         'code',             // Product code
         'actualPrice',     // Actual price of the product
-        'sellPrice',       // Selling price of the product
+        'salePrice',       // Selling price of the product
         'description',      // Product description (nullable)
-        'category',         // Product category
+        'categoryId',         // Product category
         'brand',            // Brand name
         'unit',             // uom of the product
         'thumbnail',        // Path to the thumbnail image
         'user_id'           // Foreign key for user (if applicable)
-    ];    
+    ];
 
 
     /**
      * User
-     * 
+     *
      * Get User Uploaded By Product
      *
      * @return array Products

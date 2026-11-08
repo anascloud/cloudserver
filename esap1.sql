@@ -309,7 +309,7 @@ CREATE TABLE IF NOT EXISTS `products` (
   `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
   `actualPrice` double(8,2) NOT NULL DEFAULT '0.00',
   `description` text COLLATE utf8mb4_unicode_ci,
-  `sellPrice` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `salePrice` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `category` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `attributes` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `unit` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -330,7 +330,7 @@ CREATE TABLE IF NOT EXISTS `products` (
 -- Dumping data for table `products`
 --
 
-INSERT INTO `products` (`id`, `actualPrice`, `description`, `sellPrice`, `category`, `attributes`, `unit`, `user_id`, `created_at`, `updated_at`, `code`, `brand`, `size`, `name`, `status`, `thumbnail`) VALUES
+INSERT INTO `products` (`id`, `actualPrice`, `description`, `salePrice`, `category`, `attributes`, `unit`, `user_id`, `created_at`, `updated_at`, `code`, `brand`, `size`, `name`, `status`, `thumbnail`) VALUES
 (1, 10120.00, 'Description', NULL, NULL, NULL, NULL, 1, '2024-10-01 19:04:31', '2024-10-01 19:04:31', NULL, NULL, NULL, NULL, 'Active', NULL),
 (2, 40.00, NULL, '30', 'electronics', NULL, NULL, 7, '2024-10-13 14:45:26', '2024-10-13 14:45:26', '3456', 'nike', 'medium', 'a1', 'Active', NULL),
 (3, 40.00, NULL, '30', 'electronics', NULL, NULL, 7, '2024-10-16 14:51:07', '2024-10-16 14:51:07', '345', 'samsung', 'small', 'p3', 'Active', NULL),

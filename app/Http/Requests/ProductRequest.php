@@ -13,12 +13,12 @@ class ProductRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|max:255',
-            'code' => 'nullable|max:5000',
-            'category' => 'required|max:5000',
-            'actualPrice' => 'required|numeric',
-            'sellPrice' => 'required|numeric',
-            'thumbnail' => 'nullable|image|mimes:png,jpg,jpeg,gif,webp|max:2048',
+            'Name' => 'required|max:255',
+            'Code' => 'nullable|max:5000',
+            'CategoryId' => 'required|max:5000',
+            'ActualPrice' => 'required|numeric',
+            'SalePrice' => 'required|numeric',
+            'ProductPicture' => 'nullable|image|mimes:png,jpg,jpeg,gif,webp|max:2048',
         ];
     }
 

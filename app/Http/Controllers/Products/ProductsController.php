@@ -37,107 +37,107 @@ class ProductsController extends Controller
      * )
      */
     public function index(Request $request)
-{
-    try {
-        // Get the current page and the number of items per page from the request, defaulting to 10 items per page
-        $perPage = $request->input('per_page', 10);
-        $currentPage = $request->input('page', 1);
+    {
+        try {
+            // Get the current page and the number of items per page from the request, defaulting to 10 items per page
+            $perPage = $request->input('per_page', 10);
+            $currentPage = $request->input('page', 1);
 
-        // Get the status filter from the request (if applicable)
-        // $status = $request->input('status', null); // Uncomment if you have a status filter
+            // Get the status filter from the request (if applicable)
+            // $status = $request->input('status', null); // Uncomment if you have a status filter
 
-        // Start the query for fetching products
-        $query = DB::table('products as p')
-            ->leftJoin('categories as c', 'p.category', '=', 'c.id') // Join categories table to get category name
-            ->leftJoin('units as u', 'p.unit', '=', 'u.id') // Join categories table to get category name
-            ->select(
-                'p.id',
-                'p.name',
-                'p.code',
-                'p.actualPrice',
-                'p.sellPrice',
-                'p.description',
-                'p.brand',
-                'p.unit',
-                'p.status',
-                'p.thumbnail',
-                'p.created_at',
-                'p.updated_at',
-                'c.name as category_name', // Select category name from categories table
-                'u.name as unit_name' // Select category name from categories table
-            )
-            ->orderBy('p.id', 'DESC');
+            // Start the query for fetching products
+            $query = DB::table('products as p')
+                ->leftJoin('categories as c', 'p.categoryId', '=', 'c.id') // Join categories table to get category name
+                ->leftJoin('units as u', 'p.unit', '=', 'u.id') // Join categories table to get category name
+                ->select(
+                    'p.id',
+                    'p.name',
+                    'p.code',
+                    'p.actualPrice',
+                    'p.salePrice',
+                    'p.description',
+                    'p.brand',
+                    'p.unit',
+                    'p.status',
+                    'p.thumbnail',
+                    'p.created_at',
+                    'p.updated_at',
+                    'c.name as category_name', // Select category name from categories table
+                    'u.name as unit_name' // Select category name from categories table
+                )
+                ->orderBy('p.id', 'DESC');
 
-        // If a status filter is provided, apply it to the query
-        // if ($status) {
-        //     $query->where('status', $status); // Uncomment if filtering by status
-        // }
+            // If a status filter is provided, apply it to the query
+            // if ($status) {
+            //     $query->where('status', $status); // Uncomment if filtering by status
+            // }
 
-        // Fetch products with pagination
-        $products = $query->paginate($perPage, ['*'], 'page', $currentPage);
+            // Fetch products with pagination
+            $products = $query->paginate($perPage, ['*'], 'page', $currentPage);
 
-        // Initialize an array to hold formatted product data
-        $formattedData = [];
+            // Initialize an array to hold formatted product data
+            $formattedData = [];
 
-        // Use foreach to iterate over each product
-        foreach ($products as $product) {
-            $formattedData[] = [
-                'id' => $product->id,
-                'name' => $product->name,
-                'code' => $product->code,
-                'actualPrice' => $product->actualPrice,
-                'sellPrice' => $product->sellPrice,
-                'description' => $product->description,
-                'category' => $product->category_name,
-                'brand' => $product->brand,
-                'unit' => $product->unit_name,
-                'status' => $product->status,
-                'thumbnail' => url($product->thumbnail), // Assuming thumbnails are stored with a path
-                'created_at' => $product->created_at, // Include created_at if needed
-                'updated_at' => $product->updated_at, // Include updated_at if needed
-            ];
+            // Use foreach to iterate over each product
+            foreach ($products as $product) {
+                $formattedData[] = [
+                    'id' => $product->id,
+                    'productName' => $product->name,
+                    'code' => $product->code,
+                    'actualPrice' => $product->actualPrice,
+                    'salePrice' => $product->salePrice,
+                    'description' => $product->description,
+                    'categoryName' => $product->category_name,
+                    'brand' => $product->brand,
+                    'unit' => $product->unit_name,
+                    'approvalStatus' => $product->status,
+                    'thumbnail' => url($product->thumbnail), // Assuming thumbnails are stored with a path
+                    'created_at' => $product->created_at, // Include created_at if needed
+                    'updated_at' => $product->updated_at, // Include updated_at if needed
+                ];
+            }
+
+            // Prepare pagination links
+            $paginationLinks = [];
+            $baseUrl = $request->url();
+
+            for ($i = 1; $i <= $products->lastPage(); $i++) {
+                $paginationLinks[] = [
+                    'url' => $i == $currentPage ? null : $baseUrl . '?page=' . $i . '&per_page=' . $perPage,
+                    'label' => $i,
+                    'active' => $i == $currentPage,
+                ];
+            }
+
+            // Return the formatted response
+            return response()->json([
+                'status' => true,
+                'message' => 'Product List Fetched Successfully!',
+                'errors' => null,
+                'data' => [
+                    'current_page' => $products->currentPage(),
+                    'data' => $formattedData,
+                    'first_page_url' => $products->url(1),
+                    'from' => $products->firstItem(),
+                    'last_page' => $products->lastPage(),
+                    'last_page_url' => $products->url($products->lastPage()),
+                    'links' => $paginationLinks,
+                    'next_page_url' => $products->nextPageUrl(),
+                    'path' => $baseUrl,
+                    'per_page' => $products->perPage(),
+                    'prev_page_url' => $products->previousPageUrl(),
+                    'to' => $products->lastItem(),
+                    'total' => $products->total(),
+                ]
+            ]);
+        } catch (\Exception $e) {
+            // Return a JSON response with the error message and line number
+            return response()->json([$e->getMessage(), $e->getLine()]);
         }
-
-        // Prepare pagination links
-        $paginationLinks = [];
-        $baseUrl = $request->url();
-
-        for ($i = 1; $i <= $products->lastPage(); $i++) {
-            $paginationLinks[] = [
-                'url' => $i == $currentPage ? null : $baseUrl . '?page=' . $i . '&per_page=' . $perPage,
-                'label' => $i,
-                'active' => $i == $currentPage,
-            ];
-        }
-
-        // Return the formatted response
-        return response()->json([
-            'status' => true,
-            'message' => 'Product List Fetched Successfully!',
-            'errors' => null,
-            'data' => [
-                'current_page' => $products->currentPage(),
-                'data' => $formattedData,
-                'first_page_url' => $products->url(1),
-                'from' => $products->firstItem(),
-                'last_page' => $products->lastPage(),
-                'last_page_url' => $products->url($products->lastPage()),
-                'links' => $paginationLinks,
-                'next_page_url' => $products->nextPageUrl(),
-                'path' => $baseUrl,
-                'per_page' => $products->perPage(),
-                'prev_page_url' => $products->previousPageUrl(),
-                'to' => $products->lastItem(),
-                'total' => $products->total(),
-            ]
-        ]);
-    } catch (\Exception $e) {
-        // Return a JSON response with the error message and line number
-        return response()->json([$e->getMessage(), $e->getLine()]);
     }
-}
 
-    
+
     /**
      * @OA\GET(
      *     path="/api/products/view/all",
@@ -160,7 +160,7 @@ class ProductsController extends Controller
             return $this->responseRepository->ResponseError(null, $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     /**
      * @OA\GET(
      *     path="/api/products/view/search",
@@ -207,73 +207,69 @@ class ProductsController extends Controller
      * )
      */
     public function store(ProductRequest $request)
-{
-    try {
-        // Validate the incoming request
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'code' => 'required|string|max:100|unique:products,code',
-            'actualPrice' => 'required|numeric',
-            'sellPrice' => 'required|numeric',
-            'description' => 'nullable|string|max:1000',
-            'category' => 'required|string|max:255',
-            'brand' => 'nullable|string|max:255',
-            'unit' => 'nullable|string|max:50',
-            'thumbnail' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048',
-        ]);
+    {
+        try {
+            // Validate the incoming request
+            $validator = Validator::make($request->all(), [
+                'Name' => 'required|string|max:255',
+                'Code' => 'required|string|max:100|unique:products,code',
+                'ActualPrice' => 'required|numeric',
+                'SalePrice' => 'required|numeric',
+                'Description' => 'nullable|string|max:1000',
+                'CategoryId' => 'required|string|max:255',
+                'ProductPicture' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048',
+            ]);
 
-        if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors()->first(), 'type' => 'error']);
-        }
-
-        // Prepare data for insertion
-        $data = $request->all();
-
-        if ($request->hasFile('thumbnail')) {
-            $image = $request->file('thumbnail');
-            $filename = time() . '.' . $image->getClientOriginalExtension();
-            $thumbnailPath = $image->move(public_path('uploads'), $filename); // Save to public/uploads
-            $data['thumbnail'] = 'uploads/' . $filename; // Store relative path in DB
-        }
-
-        // Insert the data into the products table using Query Builder
-        $productId = DB::table('products')->insertGetId([
-            'name' => $data['name'],
-            'code' => $data['code'],
-            'actualPrice' => $data['actualPrice'],
-            'sellPrice' => $data['sellPrice'],
-            'description' => $data['description'] ?? null, // Optional description field
-            'category' => $data['category'],
-            'brand' => $data['brand'],
-            'unit' => $data['unit'],
-            'status' => 'Active',
-            'user_id' => auth()->user()->id,
-            'thumbnail' => $data['thumbnail'] ?? null, // Stored path from above
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        // Handle attributes separately if it's an array of objects
-        if (!empty($data['attributes']) && is_array($data['attributes'])) {
-            foreach ($data['attributes'] as $attribute) {
-                DB::table('product_attributes')->insert([
-                    'product_id' => $productId,
-                    'label' => $attribute['label'],
-                    'value' => $attribute['value'],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
+            if ($validator->fails()) {
+                return response()->json(['message' => $validator->errors()->first(), 'type' => 'error']);
             }
+
+            // Prepare data for insertion
+            $data = $request->all();
+
+            if ($request->hasFile('thumbnail')) {
+                $image = $request->file('thumbnail');
+                $filename = time() . '.' . $image->getClientOriginalExtension();
+                $thumbnailPath = $image->move(public_path('uploads'), $filename); // Save to public/uploads
+                $data['thumbnail'] = 'uploads/' . $filename; // Store relative path in DB
+            }
+
+            // Insert the data into the products table using Query Builder
+            $productId = DB::table('products')->insertGetId([
+                'name' => $data['Name'],
+                'code' => $data['Code'],
+                'actualPrice' => $data['ActualPrice'],
+                'salePrice' => $data['SalePrice'],
+                'description' => $data['Description'] ?? null, // Optional description field
+                'category' => $data['CategoryId'],
+                'unitCost' => $data['unitCost'],
+                'status' => 'Active',
+                'user_id' => auth()->user()->id,
+                'thumbnail' => $data['thumbnail'] ?? null, // Stored path from above
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            // Handle attributes separately if it's an array of objects
+            if (!empty($data['attributes']) && is_array($data['attributes'])) {
+                foreach ($data['attributes'] as $attribute) {
+                    DB::table('product_attributes')->insert([
+                        'product_id' => $productId,
+                        'label' => $attribute['label'],
+                        'value' => $attribute['value'],
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+            }
+
+            // Return success response
+            return response()->json(['message' => 'New Product Created Successfully!', 'type' => 'success', 'productId' => $productId]);
+        } catch (\Exception $exception) {
+            // Return error response if something goes wrong
+            return response()->json(['message' => $exception->getMessage(), 'type' => 'error'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        // Return success response
-        return response()->json(['message' => 'New Product Created Successfully!', 'type' => 'success', 'productId' => $productId]);
-
-    } catch (\Exception $exception) {
-        // Return error response if something goes wrong
-        return response()->json(['message' => $exception->getMessage(), 'type' => 'error'], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
-}
 
 
     /**
@@ -332,104 +328,104 @@ class ProductsController extends Controller
      * )
      */
     public function update(Request $request, $id)
-{
-    try {
-        // return response()->json($request->all()); 
-        if(!empty($request->status) && !empty($id)){
-            $product = Product::find($id);
+    {
+        try {
+            // return response()->json($request->all());
+            if (!empty($request->status) && !empty($id)) {
+                $product = Product::find($id);
 
-            if (!$product) {
-                return response()->json(['message' => 'product not found', 'type' => 'error']); 
-            }
-            $product->status = $request->status;
-            $saved = $product->save();
-
-            if($saved){
-                $product->avatarpath = url($product->avatar);
-                return response()->json(['data'=> $product,'message' => 'product updated successfully', 'type' => 'success']);
-            }else{
-                return response()->json(['message' => 'product updated Failed', 'type' => 'error']);
-            }
-        }else{
-            // Validate the incoming request
-            $validator = Validator::make($request->all(), [
-                'name' => 'required|string|max:255',
-                'code' => 'required|string|max:100|unique:products,code,' . $id,
-                'actualPrice' => 'required|numeric',
-                'sellPrice' => 'required|numeric',
-                'attributes' => 'nullable',
-                'description' => 'nullable|string|max:1000',
-                'category' => 'required|string|max:255',
-                'brand' => 'nullable|string|max:255',
-                'unit' => 'nullable|string|max:50',
-                'thumbnail' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048',
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json(['message' => $validator->errors()->first(), 'type' => 'error']);
-            }
-
-            // Find the existing product
-            $product = DB::table('products')->where('id', $id)->first();
-
-            if (!$product) {
-                return response()->json(['message' => 'Product Not Found', 'type' => 'error'], Response::HTTP_NOT_FOUND);
-            }
-
-            // Prepare data for update
-            $data = $request->all();
-
-            // Handle thumbnail upload if new file is provided
-            if ($request->hasFile('thumbnail')) {
-                $image = $request->file('thumbnail');
-                $filename = time() . '.' . $image->getClientOriginalExtension();
-                $thumbnailPath = $image->move(public_path('uploads'), $filename); // Save to public/uploads
-                $data['thumbnail'] = 'uploads/' . $filename; // Store relative path in DB
-            } else {
-                // If no new thumbnail is uploaded, retain the old one
-                $data['thumbnail'] = $product->thumbnail;
-            }
-
-            // Update the product using Query Builder
-            DB::table('products')->where('id', $id)->update([
-                'name' => $data['name'],
-                'code' => $data['code'],
-                'actualPrice' => $data['actualPrice'],
-                'sellPrice' => $data['sellPrice'],
-                'description' => $data['description'] ?? null, // Optional description field
-                'category' => $data['category'],
-                'brand' => $data['brand'],
-                'unit' => $data['unit'],
-                'attributes' => $data['attributes'],
-                'thumbnail' => $data['thumbnail'], // Stored path from above or old one
-                'updated_at' => now(),
-            ]);
-
-            // Handle attributes separately if it's an array of objects
-            if (!empty($data['attributes']) && is_array($data['attributes'])) {
-                // First, delete existing attributes
-                DB::table('product_attributes')->where('product_id', $id)->delete();
-
-                // Then, insert new attributes
-                foreach ($data['attributes'] as $attribute) {
-                    DB::table('product_attributes')->insert([
-                        'product_id' => $id,
-                        'label' => $attribute['label'],
-                        'value' => $attribute['value'],
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
+                if (!$product) {
+                    return response()->json(['message' => 'product not found', 'type' => 'error']);
                 }
-            }
+                $product->status = $request->status;
+                $saved = $product->save();
 
-            // Return success response
-            return response()->json(['message' => 'Product Updated Successfully!', 'type' => 'success']);
+                if ($saved) {
+                    $product->avatarpath = url($product->avatar);
+                    return response()->json(['data' => $product, 'message' => 'product updated successfully', 'type' => 'success']);
+                } else {
+                    return response()->json(['message' => 'product updated Failed', 'type' => 'error']);
+                }
+            } else {
+                // Validate the incoming request
+                $validator = Validator::make($request->all(), [
+                    'name' => 'required|string|max:255',
+                    'code' => 'required|string|max:100|unique:products,code,' . $id,
+                    'actualPrice' => 'required|numeric',
+                    'salePrice' => 'required|numeric',
+                    'attributes' => 'nullable',
+                    'description' => 'nullable|string|max:1000',
+                    'category' => 'required|string|max:255',
+                    'brand' => 'nullable|string|max:255',
+                    'unit' => 'nullable|string|max:50',
+                    'thumbnail' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048',
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json(['message' => $validator->errors()->first(), 'type' => 'error']);
+                }
+
+                // Find the existing product
+                $product = DB::table('products')->where('id', $id)->first();
+
+                if (!$product) {
+                    return response()->json(['message' => 'Product Not Found', 'type' => 'error'], Response::HTTP_NOT_FOUND);
+                }
+
+                // Prepare data for update
+                $data = $request->all();
+
+                // Handle thumbnail upload if new file is provided
+                if ($request->hasFile('thumbnail')) {
+                    $image = $request->file('thumbnail');
+                    $filename = time() . '.' . $image->getClientOriginalExtension();
+                    $thumbnailPath = $image->move(public_path('uploads'), $filename); // Save to public/uploads
+                    $data['thumbnail'] = 'uploads/' . $filename; // Store relative path in DB
+                } else {
+                    // If no new thumbnail is uploaded, retain the old one
+                    $data['thumbnail'] = $product->thumbnail;
+                }
+
+                // Update the product using Query Builder
+                DB::table('products')->where('id', $id)->update([
+                    'name' => $data['name'],
+                    'code' => $data['code'],
+                    'actualPrice' => $data['actualPrice'],
+                    'salePrice' => $data['salePrice'],
+                    'description' => $data['description'] ?? null, // Optional description field
+                    'category' => $data['category'],
+                    'brand' => $data['brand'],
+                    'unit' => $data['unit'],
+                    'attributes' => $data['attributes'],
+                    'thumbnail' => $data['thumbnail'], // Stored path from above or old one
+                    'updated_at' => now(),
+                ]);
+
+                // Handle attributes separately if it's an array of objects
+                if (!empty($data['attributes']) && is_array($data['attributes'])) {
+                    // First, delete existing attributes
+                    DB::table('product_attributes')->where('product_id', $id)->delete();
+
+                    // Then, insert new attributes
+                    foreach ($data['attributes'] as $attribute) {
+                        DB::table('product_attributes')->insert([
+                            'product_id' => $id,
+                            'label' => $attribute['label'],
+                            'value' => $attribute['value'],
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+                    }
+                }
+
+                // Return success response
+                return response()->json(['message' => 'Product Updated Successfully!', 'type' => 'success']);
+            }
+        } catch (\Exception $exception) {
+            // Return error response if something goes wrong
+            return response()->json(['message' => $exception->getMessage(), 'type' => 'error'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-    } catch (\Exception $exception) {
-        // Return error response if something goes wrong
-        return response()->json(['message' => $exception->getMessage(), 'type' => 'error'], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
-}
 
     /**
      * @OA\DELETE(
@@ -449,7 +445,7 @@ class ProductsController extends Controller
         try {
             $produtData =  $this->productRepository->getByID($id);
             $deleted = $this->productRepository->delete($id);
-            if(!$deleted)
+            if (!$deleted)
                 return $this->responseRepository->ResponseError(null, 'Product Not Found', Response::HTTP_NOT_FOUND);
 
             return $this->responseRepository->ResponseSuccess($produtData, 'Product Deleted Successfully !');

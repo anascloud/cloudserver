@@ -132,6 +132,14 @@ Route::group([
         Route::get('attributes/view/search', [AttributeController::class, 'search']);
         Route::resource('customer', CustomerController::class);
         Route::get('reporting/account-recivable-report', [AccountReceivableController::class, 'index']);
+
+        /**
+         * Products Module
+         */
+        Route::resource('products', ProductsController::class);
+        Route::post('products/{id}', [ProductsController::class, 'update']);
+        Route::get('products/view/all', [ProductsController::class, 'indexAll']);
+        Route::get('products/view/search', [ProductsController::class, 'search']);
     });
 
     /**
@@ -167,15 +175,6 @@ Route::group([
     // Route::resource('feedbacks', FeedbacksController::class);
     // Route::get('feedbacks/view/all', [FeedbacksController::class, 'indexAll']);
     // Route::get('feedbacks/view/search', [FeedbacksController::class, 'search']);
-
-
-    /**
-     * Products Module
-     */
-    Route::resource('products', ProductsController::class);
-    Route::post('products/{id}', [ProductsController::class, 'update']);
-    Route::get('products/view/all', [ProductsController::class, 'indexAll']);
-    Route::get('products/view/search', [ProductsController::class, 'search']);
 
 
     /**

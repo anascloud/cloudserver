@@ -13,7 +13,7 @@ class CreateProductsTable extends Migration
             $table->string('name', 100)->nullable();
             $table->string('code', 100)->nullable();
             $table->double('actualPrice', 8, 2)->default(0);
-            $table->string('sellPrice', 100)->nullable();
+            $table->string('salePrice', 100)->nullable();
             $table->text('description')->nullable();
             $table->string('category', 100)->nullable();
             $table->string('brand', 100)->nullable();
