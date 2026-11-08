@@ -7,7 +7,7 @@ use App\Http\Controllers\Users\UsersController;
 use App\Http\Controllers\Products\ProductsController;
 use App\Http\Controllers\Roles\RolesController;
 use App\Http\Controllers\Permissions\PermissionsController;
-use App\Http\Controllers\Feedbacks\FeedbacksController;
+use App\Http\Controllers\Opportunity\OpportunityController;
 use App\Http\Controllers\Stocks\StocksController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\Campaigns\CampaignController;
@@ -158,6 +158,14 @@ Route::group([
         Route::post('lead/{id}', [LeadController::class, 'update']);
         Route::get('lead/view/all', [LeadController::class, 'indexAll']);
         Route::get('lead/view/search', [LeadController::class, 'search']);
+
+        /**
+         * opportunity Module
+         */
+        Route::resource('opportunity', OpportunityController::class);
+        Route::post('opportunity/{id}', [OpportunityController::class, 'update']);
+        Route::get('opportunity/view/all', [OpportunityController::class, 'indexAll']);
+        Route::get('opportunity/view/search', [OpportunityController::class, 'search']);
     });
 
     /**

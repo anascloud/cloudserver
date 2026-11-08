@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Repositories\ResponseRepository;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -59,6 +60,8 @@ abstract class ApiCrudController extends Controller
 
     protected $fileFields = [];
 
+    protected $dateFields = [];
+
     protected $syncDetails = false;
 
     protected $detailTable;
@@ -96,6 +99,33 @@ abstract class ApiCrudController extends Controller
         if ($this->resourcePlural === null) {
             $this->resourcePlural = $this->resource;
         }
+    }
+
+    protected function normalizeDates(array $data)
+    {
+        if (empty($this->dateFields)) {
+            return $data;
+        }
+
+        foreach ($this->dateFields as $field => $format) {
+            // Support both ['closingDate'] and ['closingDate' => 'Y-m-d']
+            if (is_int($field)) {
+                $field = $format;
+                $format = 'Y-m-d H:i:s';
+            }
+
+            if (!array_key_exists($field, $data) || $data[$field] === null || $data[$field] === '') {
+                continue;
+            }
+
+            try {
+                $data[$field] = Carbon::parse($data[$field])->format($format);
+            } catch (\Throwable $e) {
+                // Leave original value; validation will catch invalid dates
+            }
+        }
+
+        return $data;
     }
 
     public function indexAll(Request $request)
@@ -140,6 +170,7 @@ abstract class ApiCrudController extends Controller
             $this->validateRequest($request, 'store');
 
             $data = $this->beforeStore($request, $this->payload($request));
+            $data = $this->normalizeDates($data);
 
             if ($this->isDbMode()) {
                 $data = $this->withTimestamps($data, true);
@@ -185,6 +216,7 @@ abstract class ApiCrudController extends Controller
             $this->validateRequest($request, 'update');
 
             $data = $this->beforeUpdate($request, $this->payload($request, $item), $item);
+            $data = $this->normalizeDates($data);
 
             if ($this->isDbMode()) {
                 $data = $this->withTimestamps($data, false);
