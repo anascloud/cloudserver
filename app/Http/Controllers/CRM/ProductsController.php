@@ -4,6 +4,7 @@ namespace App\Http\Controllers\CRM;
 
 use App\Http\Controllers\ApiCrudController;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ProductsController extends ApiCrudController
 {
@@ -74,6 +75,24 @@ class ProductsController extends ApiCrudController
         'search' => 'Product Search Results Fetched Successfully!',
         'not_found' => 'Product Not Found',
     ];
+
+    /**
+     * Override update so the current record is excluded from the
+     * `code` uniqueness check. `store()` keeps the plain unique rule.
+     */
+    public function update(Request $request, $id = null)
+    {
+        $id = $id ?: $request->input('id');
+
+        $this->rules['code'] = [
+            'required',
+            'string',
+            'max:100',
+            Rule::unique('products', 'code')->ignore($id),
+        ];
+
+        return parent::update($request, $id);
+    }
 
     protected function applyListQuery($query, Request $request)
     {
