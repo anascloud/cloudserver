@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Leads;
+namespace App\Http\Controllers\CRM;
 
 use App\Http\Controllers\ApiCrudController;
 use Illuminate\Http\Request;

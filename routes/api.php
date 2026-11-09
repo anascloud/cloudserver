@@ -2,19 +2,19 @@
 //app\Http\Controllers\Brands\BrandController.php
 use App\Http\Controllers\Attributes\AttributeController;
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\Categories\CategoryController;
+use App\Http\Controllers\CRM\CategoryController;
 use App\Http\Controllers\Users\UsersController;
-use App\Http\Controllers\Products\ProductsController;
-use App\Http\Controllers\Roles\RolesController;
-use App\Http\Controllers\Permissions\PermissionsController;
-use App\Http\Controllers\Opportunity\OpportunityController;
-use App\Http\Controllers\Quotation\QuotationController;
+use App\Http\Controllers\CRM\ProductsController;
+use App\Http\Controllers\Users\RolesController;
+use App\Http\Controllers\Users\PermissionsController;
+use App\Http\Controllers\CRM\OpportunityController;
+use App\Http\Controllers\CRM\QuotationController;
 use App\Http\Controllers\Stocks\StocksController;
-use App\Http\Controllers\BrandController;
-use App\Http\Controllers\Campaigns\CampaignController;
-use App\Http\Controllers\Leads\LeadController;
+use App\Http\Controllers\CRM\BrandController;
+use App\Http\Controllers\CRM\CampaignController;
+use App\Http\Controllers\CRM\LeadController;
 use App\Http\Controllers\Units\UnitController;
-use App\Http\Controllers\Projects\ProjectsController;
+use App\Http\Controllers\CRM\ProjectsController;
 use App\Http\Controllers\SystemController;
 use App\Http\Controllers\FM\CompanyController;
 use App\Http\Controllers\FM\CountryController;
@@ -56,6 +56,8 @@ use App\Http\Controllers\FM\DashboardController;
 use App\Http\Controllers\SCM\FeatureReportController;
 use App\Http\Controllers\CRM\CustomerController;
 use App\Http\Controllers\CRM\AccountReceivableController;
+use App\Http\Controllers\CRM\FeedbacksController;
+use App\Http\Controllers\SCM\WarehouseController;
 use App\Http\Controllers\Tasks\TasksController;
 use Illuminate\Support\Facades\Route;
 
@@ -104,120 +106,35 @@ Route::group([
      */
     Route::resource('users', UsersController::class);
     Route::put('users/{id}', [UsersController::class, 'update']);
-    Route::get('users/view/all', [UsersController::class, 'indexAll']);
-    Route::get('users/view/search', [UsersController::class, 'search']);
     Route::post('profile-reset-password', [AuthController::class, 'profileResetPassword']);
-
-    /**
-     * Roles Module
-     */
     Route::resource('roles', RolesController::class);
-    Route::get('roles/view/all', [RolesController::class, 'indexAll']);
-    Route::get('roles/view/search', [RolesController::class, 'search']);
-
-    /**
-     * Permissions Module
-     */
     Route::resource('permissions', PermissionsController::class);
-    Route::get('permissions/view/all', [PermissionsController::class, 'indexAll']);
-    Route::get('permissions/view/search', [PermissionsController::class, 'search']);
 
     /**
-     * Category Module
+     * CRM Module
      */
     Route::prefix('crm/v1')->group(function () {
         Route::resource('category', CategoryController::class);
-        Route::get('categories/view/all', [CategoryController::class, 'indexAll']);
-        Route::get('categories/view/search', [CategoryController::class, 'search']);
         Route::resource('attribute', AttributeController::class);
-        Route::get('attributes/view/all', [AttributeController::class, 'indexAll']);
-        Route::get('attributes/view/search', [AttributeController::class, 'search']);
+        Route::resource('stock', StocksController::class);
         Route::resource('customer', CustomerController::class);
         Route::resource('tasks', TasksController::class);
-        Route::get('reporting/account-recivable-report', [AccountReceivableController::class, 'index']);
-
-        /**
-         * Products Module
-         */
         Route::resource('products', ProductsController::class);
-        Route::post('products/{id}', [ProductsController::class, 'update']);
-        Route::get('products/view/all', [ProductsController::class, 'indexAll']);
-        Route::get('products/view/search', [ProductsController::class, 'search']);
-
-        /**
-         * Campaign Module
-         */
         Route::resource('campaign', CampaignController::class);
-        Route::post('campaign/{id}', [CampaignController::class, 'update']);
-        Route::get('campaign/view/all', [CampaignController::class, 'indexAll']);
-        Route::get('campaign/view/search', [CampaignController::class, 'search']);
-
-        /**
-         * Lead Module
-         */
         Route::resource('lead', LeadController::class);
-        Route::post('lead/{id}', [LeadController::class, 'update']);
-        Route::get('lead/view/all', [LeadController::class, 'indexAll']);
-        Route::get('lead/view/search', [LeadController::class, 'search']);
-
-        /**
-         * opportunity Module
-         */
         Route::resource('opportunity', OpportunityController::class);
-        Route::post('opportunity/{id}', [OpportunityController::class, 'update']);
-        Route::get('opportunity/view/all', [OpportunityController::class, 'indexAll']);
-        Route::get('opportunity/view/search', [OpportunityController::class, 'search']);
-
-        /**
-         * quotation Module
-         */
         Route::resource('quotation', QuotationController::class);
-        Route::post('quotation/{id}', [QuotationController::class, 'update']);
-        Route::get('quotation/view/all', [QuotationController::class, 'indexAll']);
-        Route::get('quotation/view/search', [QuotationController::class, 'search']);
+        Route::resource('brands', BrandController::class);
+        Route::resource('units', UnitController::class);
+        Route::resource('projects', ProjectsController::class);
+        Route::resource('feedbacks', FeedbacksController::class);
+        Route::get('reporting/account-recivable-report', [AccountReceivableController::class, 'index']);
     });
 
-    /**
-     * Brand Module
-     */
-    Route::resource('brands', BrandController::class);
-    Route::get('brands/view/all', [BrandController::class, 'indexAll']);
-    Route::get('brands/view/search', [BrandController::class, 'search']);
+    Route::prefix('scm/v1')->group(function () {
+        Route::resource('warehouse', WarehouseController::class);
+    });
 
-    /**
-     * unit Module
-     */
-    Route::resource('units', UnitController::class);
-    Route::get('units/view/all', [UnitController::class, 'indexAll']);
-    Route::get('units/view/search', [UnitController::class, 'search']);
-
-    /**
-     * Attribute Module
-     */
-
-
-    /**
-     * Stock Module
-     */
-    Route::resource('stocks', StocksController::class);
-    Route::get('stocks/view/all', [StocksController::class, 'indexAll']);
-    Route::get('stocks/view/search', [StocksController::class, 'search']);
-
-
-    /**
-     * Feedbacks Module
-     */
-    // Route::resource('feedbacks', FeedbacksController::class);
-    // Route::get('feedbacks/view/all', [FeedbacksController::class, 'indexAll']);
-    // Route::get('feedbacks/view/search', [FeedbacksController::class, 'search']);
-
-    /**
-     * Project Module
-     */
-    Route::resource('projects', ProjectsController::class);
-    Route::post('projects/{id}', [ProjectsController::class, 'update']);
-    Route::get('projects/view/all', [ProjectsController::class, 'indexAll']);
-    Route::get('projects/view/search', [ProjectsController::class, 'search']);
 
     /**
      * System Module

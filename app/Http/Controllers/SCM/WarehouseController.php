@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Opportunity;
+namespace App\Http\Controllers\SCM;
 
 use App\Http\Controllers\ApiCrudController;
 use Illuminate\Http\Request;
 
-class OpportunityController extends ApiCrudController
+class WarehouseController extends ApiCrudController
 {
     protected $dbTable = 'opportunities';
 

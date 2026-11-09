@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\CRM;
+
+use App\Http\Controllers\ApiCrudController;
 
 class BrandController extends ApiCrudController
 {

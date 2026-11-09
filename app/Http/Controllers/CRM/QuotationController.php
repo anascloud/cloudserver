@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Quotation;
+namespace App\Http\Controllers\CRM;
 
 use App\Http\Controllers\ApiCrudController;
 use App\Repositories\ResponseRepository;

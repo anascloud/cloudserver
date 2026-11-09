@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Feedbacks;
+namespace App\Http\Controllers\CRM;
 
 use App\Http\Controllers\ApiCrudController;
 
