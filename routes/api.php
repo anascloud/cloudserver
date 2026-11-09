@@ -58,6 +58,7 @@ use App\Http\Controllers\CRM\CustomerController;
 use App\Http\Controllers\CRM\AccountReceivableController;
 use App\Http\Controllers\CRM\FeedbacksController;
 use App\Http\Controllers\SCM\WarehouseController;
+use App\Http\Controllers\SCM\WarehouseManagerController;
 use App\Http\Controllers\Tasks\TasksController;
 use Illuminate\Support\Facades\Route;
 
@@ -133,6 +134,7 @@ Route::group([
 
     Route::prefix('scm/v1')->group(function () {
         Route::resource('warehouse', WarehouseController::class);
+        Route::resource('warehouse-manager', WarehouseManagerController::class);
     });
 
 

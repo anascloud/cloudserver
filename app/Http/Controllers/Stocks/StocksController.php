@@ -13,18 +13,18 @@ class StocksController extends ApiCrudController
 
     protected $resourcePlural = 'Stocks';
 
-    protected $fields = ['product', 'warehouse', 'quantity'];
+    protected $fields = ['productId', 'warehouseId', 'stockQuantity'];
 
-    protected $searchable = ['products.name', 'stocks.warehouse'];
+    protected $searchable = ['products.name', 'stocks.warehouseId'];
 
     protected $searchOnList = false;
 
     protected $indexPerPage = 10;
 
     protected $rules = [
-        'product' => 'required|string',
-        'warehouse' => 'required|string',
-        'quantity' => 'required|integer',
+        'productId' => 'required|integer',
+        'warehouseId' => 'required|string',
+        'stockQuantity' => 'required|integer',
     ];
 
     protected $writeResponse = 'legacy';
@@ -44,7 +44,7 @@ class StocksController extends ApiCrudController
     {
         if (in_array($this->listMode, ['index', 'search'], true)) {
             return DB::table('stocks')
-                ->join('products', 'stocks.product', '=', 'products.id')
+                ->join('products', 'stocks.productId', '=', 'products.id')
                 ->select('stocks.*', 'products.name as product_name');
         }
 

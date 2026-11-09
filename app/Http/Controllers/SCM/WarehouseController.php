@@ -7,56 +7,64 @@ use Illuminate\Http\Request;
 
 class WarehouseController extends ApiCrudController
 {
-    protected $dbTable = 'opportunities';
+    protected $dbTable = 'warehouses';
 
-    protected $resource = 'Opportunity';
+    protected $resource = 'Warehouse';
 
-    protected $resourcePlural = 'Opportunities';
+    protected $resourcePlural = 'Warehouses';
 
     protected $fields = [
-        'dealOwner',
-        'name',
-        'leadSource',
-        'leadId',
-        'campaignId',
-        'customerId',
-        'closingDate',
-        'amount',
-        'probability',
-        'type',
-        'primaryContact',
-        'forecastedRevenue',
-        'nextStep',
-        'stage',
-        'description',
+        'warehouseName',
+        'warehouseManagerId',
+        'company_id',
+        'company_name',
+        'location',
+        'capacity',
+        'inUseCapacity',
+        'emergencyContact',
+        'binLocation',
+        'zoningLocation',
+        'startHour',
+        'endHour',
+        'pickedBy',
+        'packedBy',
+        'quantityToPick',
+        'datePicked',
+        'temperatureControlled',
+        'fireSafetyCompliance',
+        'status',
     ];
 
     protected $dateFields = [
-        'closingDate' => 'Y-m-d',
+        'datePicked' => 'Y-m-d H:i:s',
     ];
 
-    protected $searchable = ['name', 'primaryContact', 'description'];
+    protected $searchable = ['warehouseName', 'location', 'binLocation', 'zoningLocation'];
 
     protected $searchOnList = false;
 
     protected $clearMissingOnUpdate = true;
 
     protected $rules = [
-        'dealOwner' => 'required|integer|exists:users,id',
-        'name' => 'required|string|max:255',
-        'leadSource' => 'nullable|string|max:100',
-        'leadId' => 'nullable|integer|exists:leads,id',
-        'campaignId' => 'nullable|integer|exists:campaigns,id',
-        'customerId' => 'nullable|integer|exists:customers,id',
-        'closingDate' => 'nullable|date',
-        'amount' => 'required|numeric|min:0',
-        'probability' => 'required|integer|min:0|max:100',
-        'type' => 'required|string|max:100',
-        'primaryContact' => 'nullable|string|max:255',
-        'forecastedRevenue' => 'nullable|numeric|min:0',
-        'nextStep' => 'nullable|string|max:255',
-        'stage' => 'nullable|string|max:100',
-        'description' => 'nullable|string|max:5000',
+        'warehouseName' => 'required|string|max:255',
+        'warehouseManagerId' => 'required|integer|exists:users,id',
+        'company_id' => 'required|integer|exists:fm_companies,id',
+        'company_name' => 'required|string|max:255',
+        'location' => 'required|string|max:500',
+        'capacity' => 'required|integer|min:0',
+        'inUseCapacity' => 'required|integer|min:0',
+        'emergencyContact' => 'nullable|string|max:100',
+        'binLocation' => 'nullable|string|max:255',
+        'zoningLocation' => 'nullable|string|max:255',
+        'startHour' => 'required|date_format:H:i:s',
+        'endHour' => 'required|date_format:H:i:s|after:startHour',
+        'pickedBy' => 'required|string|max:255',
+        'packedBy' => 'required|string|max:255',
+        'quantityToPick' => 'required|integer|min:0',
+        'datePicked' => 'required|date',
+        'temperatureControlled' => 'required|boolean',
+        'fireSafetyCompliance' => 'required|boolean',
+        'status' => 'nullable|boolean',
     ];
 
     protected $indexFormat = 'paginated_links';
@@ -69,19 +77,19 @@ class WarehouseController extends ApiCrudController
 
     protected $showResponse = 'legacy';
 
-    protected $legacyStoreIdKey = 'opportunityId';
+    protected $legacyStoreIdKey = 'warehouseId';
 
-    protected $listMessage = 'Opportunity List Fetched Successfully!';
+    protected $listMessage = 'Warehouse List Fetched Successfully!';
 
-    protected $indexAllMessage = 'All Opportunities Fetched Successfully!';
+    protected $indexAllMessage = 'All Warehouses Fetched Successfully!';
 
     protected $legacyMessages = [
-        'show' => 'Opportunity Details Fetched Successfully!',
-        'store' => 'New Opportunity Created Successfully!',
-        'update' => 'Opportunity Updated Successfully!',
-        'destroy' => 'Opportunity Deleted Successfully!',
-        'search' => 'Opportunity Search Results Fetched Successfully!',
-        'not_found' => 'Opportunity Not Found',
+        'show' => 'Warehouse Details Fetched Successfully!',
+        'store' => 'New Warehouse Created Successfully!',
+        'update' => 'Warehouse Updated Successfully!',
+        'destroy' => 'Warehouse Deleted Successfully!',
+        'search' => 'Warehouse Search Results Fetched Successfully!',
+        'not_found' => 'Warehouse Not Found',
     ];
 
     protected function applyListQuery($query, Request $request)
@@ -89,21 +97,25 @@ class WarehouseController extends ApiCrudController
         if ($this->listMode === 'index') {
             $query->select(
                 'id',
-                'dealOwner',
-                'name',
-                'leadSource',
-                'leadId',
-                'campaignId',
-                'customerId',
-                'closingDate',
-                'amount',
-                'probability',
-                'type',
-                'primaryContact',
-                'forecastedRevenue',
-                'nextStep',
-                'stage',
-                'description',
+                'warehouseName',
+                'warehouseManagerId',
+                'company_id',
+                'company_name',
+                'location',
+                'capacity',
+                'inUseCapacity',
+                'emergencyContact',
+                'binLocation',
+                'zoningLocation',
+                'startHour',
+                'endHour',
+                'pickedBy',
+                'packedBy',
+                'quantityToPick',
+                'datePicked',
+                'temperatureControlled',
+                'fireSafetyCompliance',
+                'status',
                 'created_at',
                 'updated_at'
             );
