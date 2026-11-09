@@ -13,10 +13,10 @@ class Customer extends Model
     protected $table = 'customer';
 
     protected $fillable = [
-        'first_name', 'last_name', 'email', 'phone', 'company',
+        'firstName', 'lastName', 'email', 'phone', 'company',
         'street', 'house', 'zip', 'city', 'state', 'country',
-        'account_no', 'bank_name',
-        'currency_id', 'payment_terms', 'chart_of_account_id',
+        'accountNo', 'bankName',
+        'currency_id', 'paymentTerms', 'chart_of_account_id',
         'residence_permit_no', 'photo_path', 'cover_photo_path',
         'lead_id', 'status', 'user_id',
     ];

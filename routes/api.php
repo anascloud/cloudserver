@@ -1,5 +1,4 @@
 <?php
-//app\Http\Controllers\Brands\BrandController.php
 use App\Http\Controllers\Attributes\AttributeController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CRM\CategoryController;

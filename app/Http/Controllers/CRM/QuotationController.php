@@ -16,8 +16,7 @@ class QuotationController extends ApiCrudController
     protected $resourcePlural = 'Quotations';
 
     protected $fields = [
-        'dealOwner',
-        'name',
+        'Title',
         'quotationNo',
         'customerId',
         'leadId',
@@ -51,10 +50,9 @@ class QuotationController extends ApiCrudController
     protected $clearMissingOnUpdate = true;
 
     protected $rules = [
-        'dealOwner'         => 'required|integer|exists:users,id',
-        'name'              => 'required|string|max:255',
+        'Title'             => 'required|string|max:255',
         'quotationNo'       => 'nullable|string|max:100',
-        'customerId'        => 'required|integer|exists:customers,id',
+        'CustomerId'        => 'required|integer|exists:customers,id',
         'leadId'            => 'nullable|integer|exists:leads,id',
         'campaignId'        => 'nullable|integer|exists:campaigns,id',
         'type'              => 'required|string|max:100',
@@ -226,7 +224,7 @@ class QuotationController extends ApiCrudController
                 'dealOwner',
                 'name',
                 'quotationNo',
-                'customerId',
+                'CustomerId',
                 'leadId',
                 'campaignId',
                 'type',
