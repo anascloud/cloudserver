@@ -61,4 +61,16 @@ class Salesorder extends Model
         'tax' => 'decimal:2',
         'total' => 'decimal:2',
     ];
+
+    protected $appends = ['quotationNo'];
+
+    public function quotation()
+    {
+        return $this->belongsTo(\App\Models\Quotation::class, 'id');
+    }
+
+    public function getQuotationNoAttribute()
+    {
+        return $this->quotation?->quotationNo;
+    }
 }

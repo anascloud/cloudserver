@@ -70,7 +70,7 @@ class SalesorderController extends ApiCrudController
         'details.*.totalPrice' => 'nullable|numeric|min:0',
 
         'taxDetails'                    => 'nullable|array',
-        'taxDetails.*.tax_typeId'       => 'nullable|integer',
+        'taxDetails.*.tax_typeId'       => 'nullable|string',
         'taxDetails.*.ChartOfAccountId' => 'nullable|integer',
         'taxDetails.*.tax_rate'         => 'nullable|numeric|min:0',
         'taxDetails.*.TaxAmount'        => 'nullable|numeric|min:0',
@@ -287,9 +287,9 @@ class SalesorderController extends ApiCrudController
             $rows[] = [
                 'salesOrderId'     => $item->getKey(),
                 'tax_typeId'       => $row['tax_typeId']       ?? null,
-                'ChartOfAccountId' => $row['ChartOfAccountId'] ?? null,
+                'chartOfAccountId' => $row['chartOfAccountId'] ?? null,
                 'tax_rate'         => (float) ($row['tax_rate'] ?? 0),
-                'TaxAmount'        => (float) ($row['TaxAmount'] ?? 0),
+                'taxAmount'        => (float) ($row['taxAmount'] ?? 0),
                 'created_at'       => $now,
                 'updated_at'       => $now,
             ];
@@ -335,7 +335,7 @@ class SalesorderController extends ApiCrudController
     protected function applyListQuery($query, Request $request)
     {
         if ($this->listMode === 'index') {
-            $query->select(
+            $query->with('quotation:id,quotationNo')->select(
                 'id',
                 'type',
                 'title',
