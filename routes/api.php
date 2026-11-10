@@ -8,6 +8,7 @@ use App\Http\Controllers\Users\RolesController;
 use App\Http\Controllers\Users\PermissionsController;
 use App\Http\Controllers\CRM\OpportunityController;
 use App\Http\Controllers\CRM\QuotationController;
+use App\Http\Controllers\CRM\SalesorderController;
 use App\Http\Controllers\Stocks\StocksController;
 use App\Http\Controllers\CRM\BrandController;
 use App\Http\Controllers\CRM\CampaignController;
@@ -124,6 +125,7 @@ Route::group([
         Route::resource('lead', LeadController::class);
         Route::resource('opportunity', OpportunityController::class);
         Route::resource('quotation', QuotationController::class);
+        Route::resource('salesorder', SalesorderController::class);
         Route::resource('brands', BrandController::class);
         Route::resource('units', UnitController::class);
         Route::resource('projects', ProjectsController::class);
