@@ -6,6 +6,7 @@ use App\Http\Controllers\ApiCrudController;
 use App\Repositories\ResponseRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class QuotationController extends ApiCrudController
 {
@@ -16,7 +17,7 @@ class QuotationController extends ApiCrudController
     protected $resourcePlural = 'Quotations';
 
     protected $fields = [
-        'Title',
+        'title',
         'quotationNo',
         'customerId',
         'leadId',
@@ -43,23 +44,23 @@ class QuotationController extends ApiCrudController
         'expiryDate' => 'Y-m-d',
     ];
 
-    protected $searchable = ['name', 'quotationNo', 'primaryContact', 'description'];
+    protected $searchable = ['title', 'quotationNo', 'primaryContact', 'description'];
 
     protected $searchOnList = false;
 
     protected $clearMissingOnUpdate = true;
 
     protected $rules = [
-        'Title'             => 'required|string|max:255',
+        'title'             => 'required|string|max:255',
         'quotationNo'       => 'nullable|string|max:100',
-        'CustomerId'        => 'required|integer|exists:customers,id',
+        'CustomerId'        => 'nullable|integer|exists:customers,id',  // was required
         'leadId'            => 'nullable|integer|exists:leads,id',
         'campaignId'        => 'nullable|integer|exists:campaigns,id',
         'type'              => 'required|string|max:100',
         'status'            => 'nullable|string|max:50',
         'stage'             => 'nullable|string|max:100',
-        'amount'            => 'required|numeric|min:0',
-        'probability'       => 'required|integer|min:0|max:100',
+        'amount'            => 'nullable|numeric|min:0',                // was required; computed in finalizeDetails
+        'probability'       => 'nullable|integer|min:0|max:100',        // was required
         'forecastedRevenue' => 'nullable|numeric|min:0',
         'expiryDate'        => 'nullable|date',
         'paymentTerms'      => 'nullable|string|max:100',
@@ -68,15 +69,14 @@ class QuotationController extends ApiCrudController
         'nextStep'          => 'nullable|string|max:255',
         'description'       => 'nullable|string|max:5000',
 
-        // Nested detail validation
-        'details'                  => 'nullable|array',
-        'details.*.productId'      => 'required_with:details|integer|exists:products,id',
-        'details.*.quantity'       => 'required_with:details|numeric|min:0.01',
-        'details.*.unitPrice'      => 'nullable|numeric|min:0',
-        'details.*.unit'           => 'nullable|string|max:50',
-        'details.*.vat'            => 'nullable|numeric|min:0',
-        'details.*.tax'            => 'nullable|numeric|min:0',
-        'details.*.discount'       => 'nullable|numeric|min:0',
+        'details'              => 'nullable|array',
+        'details.*.productId'  => 'required_with:details|integer|exists:products,id',
+        'details.*.quantity'   => 'required_with:details|numeric|min:0.01',
+        'details.*.unitPrice'  => 'nullable|numeric|min:0',
+        'details.*.unit'       => 'nullable|string|max:50',
+        'details.*.vat'        => 'nullable|numeric|min:0',
+        'details.*.tax'        => 'nullable|numeric|min:0',
+        'details.*.discount'   => 'nullable|numeric|min:0',
     ];
 
     protected $indexFormat = 'paginated_links';
@@ -113,19 +113,12 @@ class QuotationController extends ApiCrudController
 
     protected $detailForeignKey = 'quotationId';
 
-    /**
-     * Auto-fill dealOwner (from authenticated user) and quotationNo on create.
-     */
     protected function beforeStore(Request $request, array $data)
     {
         $data = parent::beforeStore($request, $data);
 
-        if (empty($data['dealOwner']) && ($user = $request->user())) {
-            $data['dealOwner'] = $user->id;
-        }
-
         if (empty($data['quotationNo'])) {
-            $data['quotationNo'] = 'QTN-' . now()->format('Ymd') . '-' . strtoupper(str()->random(5));
+            $data['quotationNo'] = 'QTN-' . now()->format('Ymd') . '-' . strtoupper(Str::random(5));
         }
 
         if (empty($data['status'])) {
@@ -221,8 +214,7 @@ class QuotationController extends ApiCrudController
         if ($this->listMode === 'index') {
             $query->select(
                 'id',
-                'dealOwner',
-                'name',
+                'title',
                 'quotationNo',
                 'CustomerId',
                 'leadId',
