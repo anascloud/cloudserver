@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\CRM;
 
 use App\Http\Controllers\ApiCrudController;
+use App\Models\Quotation;
 use App\Repositories\ResponseRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -10,31 +11,11 @@ use Illuminate\Support\Str;
 
 class QuotationController extends ApiCrudController
 {
-    protected $dbTable = 'quotations';
+    protected $model = Quotation::class;
 
     protected $resource = 'Quotation';
 
     protected $resourcePlural = 'Quotations';
-
-    protected $fields = [
-        'title',
-        'quotationNo',
-        'customerId',
-        'leadId',
-        'campaignId',
-        'type',
-        'status',
-        'stage',
-        'amount',
-        'probability',
-        'forecastedRevenue',
-        'expiryDate',
-        'paymentTerms',
-        'deliveryStatus',
-        'primaryContact',
-        'nextStep',
-        'description',
-    ];
 
     /**
      * Date columns normalized before INSERT/UPDATE by ApiCrudController::normalizeDates().
@@ -48,12 +29,10 @@ class QuotationController extends ApiCrudController
 
     protected $searchOnList = false;
 
-    protected $clearMissingOnUpdate = true;
-
     protected $rules = [
         'title'             => 'required|string|max:255',
         'quotationNo'       => 'nullable|string|max:100',
-        'CustomerId'        => 'nullable|integer|exists:customers,id',  // was required
+        'customerId'        => 'nullable|integer|exists:customer,id',  // was required
         'leadId'            => 'nullable|integer|exists:leads,id',
         'campaignId'        => 'nullable|integer|exists:campaigns,id',
         'type'              => 'required|string|max:100',
@@ -175,9 +154,9 @@ class QuotationController extends ApiCrudController
         $request->merge(['details' => $details]);
 
         // Roll parent amount up from details
-        if ($grandTotal > 0 && $this->isDbMode()) {
-            DB::table($this->dbTable)
-                ->where('id', $item->id ?? $item->getId())
+        if ($grandTotal > 0) {
+            DB::table($item->getTable())
+                ->where('id', $this->itemKey($item))
                 ->update(['amount' => $grandTotal, 'updated_at' => now()]);
         }
     }
@@ -216,7 +195,7 @@ class QuotationController extends ApiCrudController
                 'id',
                 'title',
                 'quotationNo',
-                'CustomerId',
+                'customerId',
                 'leadId',
                 'campaignId',
                 'type',
@@ -228,6 +207,18 @@ class QuotationController extends ApiCrudController
                 'expiryDate',
                 'paymentTerms',
                 'deliveryStatus',
+                'shippingStreet',
+                'shippingHouse',
+                'shippingZip',
+                'shippingState',
+                'shippingCity',
+                'shippingCountryId',
+                'billingStreet',
+                'billingHouse',
+                'billingZip',
+                'billingState',
+                'billingCity',
+                'billingCountryId',
                 'primaryContact',
                 'nextStep',
                 'description',

@@ -687,7 +687,6 @@ abstract class ApiCrudController extends Controller
 
         $columns = array_flip(self::$detailColumns[$table]);
         $now = now();
-        $rows = [];
 
         $itemKey = $this->itemKey($item);
 
@@ -710,12 +709,8 @@ abstract class ApiCrudController extends Controller
             $detail = array_intersect_key($detail, $columns);
 
             if (!empty($detail)) {
-                $rows[] = $detail;
+                DB::table($table)->insert($detail);
             }
-        }
-
-        if (!empty($rows)) {
-            DB::table($table)->insert($rows);
         }
     }
 
