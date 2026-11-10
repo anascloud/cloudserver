@@ -33,20 +33,114 @@ class ParseMultipartPut
             }
 
             $value = substr($block, $contentStart + 4);
-            $value = rtrim($value, "\r\n--");
+            $value = rtrim($value, "\r\n");
 
-            if (preg_match('/^(.+)\[\d+\]$/', $name, $arrayMatch)) {
-                $key = $arrayMatch[1];
-                if (!isset($result[$key]) || !is_array($result[$key])) {
-                    $result[$key] = [];
-                }
-                $result[$key][] = $value;
-            } else {
-                $result[$name] = $value;
-            }
+            $this->assignValue($result, $name, $value);
         }
 
         return $result;
+    }
+
+    /**
+     * Assign a form field value into the nested result array using PHP-style
+     * bracket notation, also supporting dotted notation like "details[0].productId".
+     */
+    private function assignValue(array &$result, string $name, $value): void
+    {
+        if ($name === '') {
+            return;
+        }
+
+        $parts = $this->parseName($name);
+
+        $ref = &$result;
+        $last = count($parts) - 1;
+
+        foreach ($parts as $i => $part) {
+            if ($i === $last) {
+                if ($part === '') {
+                    $ref[] = $value;
+                } else {
+                    $ref[$part] = $value;
+                }
+                break;
+            }
+
+            if ($part === '') {
+                $ref[] = [];
+                end($ref);
+                $ref = &$ref[key($ref)];
+            } else {
+                if (!isset($ref[$part]) || !is_array($ref[$part])) {
+                    $ref[$part] = [];
+                }
+                $ref = &$ref[$part];
+            }
+        }
+
+        unset($ref);
+    }
+
+    /**
+     * Split a form field name into its nesting segments, supporting both
+     * bracket notation (details[0][productId]) and dotted notation
+     * (details[0].productId).
+     */
+    private function parseName(string $name): array
+    {
+        if (!str_contains($name, '[')) {
+            return $name === '' ? [] : explode('.', $name);
+        }
+
+        $parts = [];
+        $length = strlen($name);
+        $bracketPos = strpos($name, '[');
+        $parts[] = substr($name, 0, $bracketPos);
+
+        for ($i = $bracketPos; $i < $length;) {
+            if ($name[$i] === '[') {
+                $end = strpos($name, ']', $i + 1);
+
+                if ($end === false) {
+                    $parts[] = substr($name, $i + 1);
+                    break;
+                }
+
+                $parts[] = substr($name, $i + 1, $end - $i - 1);
+                $i = $end + 1;
+            } elseif ($name[$i] === '.') {
+                $start = $i + 1;
+                $end = $start;
+
+                while ($end < $length && $name[$end] !== '[' && $name[$end] !== '.') {
+                    $end++;
+                }
+
+                $parts[] = substr($name, $start, $end - $start);
+                $i = $end;
+            } else {
+                $i++;
+            }
+        }
+
+        return $parts;
+    }
+
+    /**
+     * Mirror Laravel's ConvertEmptyStringsToNull middleware, which runs before
+     * this one and therefore does not affect the manually parsed body.
+     */
+    private function nullifyEmptyStrings(array $data): array
+    {
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                $data[$key] = $this->nullifyEmptyStrings($value);
+            } elseif ($value === '') {
+                $data[$key] = null;
+            }
+        }
+
+        return $data;
     }
 
     public function handle(Request $request, Closure $next)
@@ -61,7 +155,7 @@ class ParseMultipartPut
                     $request->headers->get('Content-Type'),
                     $rawBody
                 );
-                $request->request->replace($parsed);
+                $request->request->replace($this->nullifyEmptyStrings($parsed));
             }
         }
 

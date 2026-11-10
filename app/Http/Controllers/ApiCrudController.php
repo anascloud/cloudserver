@@ -637,18 +637,43 @@ abstract class ApiCrudController extends Controller
         $table = $this->detailTableFor($item);
         $foreignKey = $this->detailForeignKeyFor($item);
 
-        DB::table($table)->where($foreignKey, $item->getKey())->delete();
+        DB::table($table)->where($foreignKey, $this->itemKey($item))->delete();
         $this->insertDetails($item, $details);
+    }
+
+    protected function itemKey($item)
+    {
+        if (is_object($item) && method_exists($item, 'getKey')) {
+            return $item->getKey();
+        }
+
+        return is_object($item) ? ($item->id ?? null) : null;
     }
 
     protected function detailTableFor($item)
     {
-        return $this->detailTable ?: Str::singular($item->getTable()) . '_details';
+        if ($this->detailTable) {
+            return $this->detailTable;
+        }
+
+        if (is_object($item) && method_exists($item, 'getTable')) {
+            return Str::singular($item->getTable()) . '_details';
+        }
+
+        return Str::singular($this->dbTable) . '_details';
     }
 
     protected function detailForeignKeyFor($item)
     {
-        return $this->detailForeignKey ?: $item->getForeignKey();
+        if ($this->detailForeignKey) {
+            return $this->detailForeignKey;
+        }
+
+        if (is_object($item) && method_exists($item, 'getForeignKey')) {
+            return $item->getForeignKey();
+        }
+
+        return Str::camel(Str::singular($this->dbTable)) . 'Id';
     }
 
     protected function insertDetails($item, array $details)
@@ -664,12 +689,14 @@ abstract class ApiCrudController extends Controller
         $now = now();
         $rows = [];
 
+        $itemKey = $this->itemKey($item);
+
         foreach ($details as $detail) {
             if (!is_array($detail)) {
                 continue;
             }
 
-            $detail[$foreignKey] = $item->getKey();
+            $detail[$foreignKey] = $itemKey;
 
             if (isset($columns['created_at'])) {
                 $detail['created_at'] = $detail['created_at'] ?? $now;
@@ -679,6 +706,7 @@ abstract class ApiCrudController extends Controller
                 $detail['updated_at'] = $detail['updated_at'] ?? $now;
             }
 
+            $detail = array_filter($detail, static fn ($value) => $value !== null);
             $detail = array_intersect_key($detail, $columns);
 
             if (!empty($detail)) {
