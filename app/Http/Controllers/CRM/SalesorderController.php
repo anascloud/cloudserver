@@ -64,9 +64,9 @@ class SalesorderController extends ApiCrudController
         'total'             => 'nullable|numeric|min:0',
 
         'details'              => 'nullable|array',
-        'details.*.ProductId'  => 'required_with:details|integer|exists:products,id',
-        'details.*.Quantity'   => 'required_with:details|numeric|min:0.01',
-        'details.*.UnitPrice'  => 'nullable|numeric|min:0',
+        'details.*.productId'  => 'required_with:details|integer|exists:products,id',
+        'details.*.quantity'   => 'required_with:details|numeric|min:0.01',
+        'details.*.unitPrice'  => 'nullable|numeric|min:0',
         'details.*.totalPrice' => 'nullable|numeric|min:0',
 
         'taxDetails'                    => 'nullable|array',
@@ -87,6 +87,12 @@ class SalesorderController extends ApiCrudController
     protected $showResponse = 'legacy';
 
     protected $legacyStoreIdKey = 'SalesorderId';
+
+    /**
+     * Return validation failures with a non-2xx status so the SPA surfaces
+     * them as errors instead of treating the response as a successful write.
+     */
+    protected $legacyValidationStatus = 422;
 
     protected $listMessage = 'Salesorder List Fetched Successfully!';
 
@@ -115,6 +121,35 @@ class SalesorderController extends ApiCrudController
      */
     protected $taxDetailTable = 'sales_order_vat_tax_details';
 
+    /**
+     * Accept the string booleans "true"/"false" (multipart forms) in addition
+     * to the values the `boolean` rule natively understands.
+     */
+    protected function validateRequest(Request $request, $action)
+    {
+        if ($request->has('updateStock')) {
+            $raw = $request->input('updateStock');
+
+            if (is_string($raw) && in_array(strtolower($raw), ['true', 'false'], true)) {
+                $request->merge(['updateStock' => strtolower($raw) === 'true']);
+            }
+        }
+
+        parent::validateRequest($request, $action);
+    }
+
+    /**
+     * Keep the legacy response body shape but do not rewrite a 422 into a 500.
+     */
+    protected function respondWriteError($message, $status = 422, $errors = null, $mode = null)
+    {
+        if (($mode ?: $this->writeResponse) === 'legacy') {
+            return response()->json(['message' => $message, 'type' => 'error'], $status);
+        }
+
+        return parent::respondWriteError($message, $status, $errors, $mode);
+    }
+
     protected function beforeStore(Request $request, array $data)
     {
         $data = parent::beforeStore($request, $data);
@@ -128,7 +163,18 @@ class SalesorderController extends ApiCrudController
         }
 
         if (array_key_exists('updateStock', $data)) {
-            $data['updateStock'] = $data['updateStock'] ? 1 : 0;
+            $data['updateStock'] = filter_var($data['updateStock'], FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
+        }
+
+        return $data;
+    }
+
+    protected function beforeUpdate(Request $request, array $data, $item)
+    {
+        $data = parent::beforeUpdate($request, $data, $item);
+
+        if (array_key_exists('updateStock', $data)) {
+            $data['updateStock'] = filter_var($data['updateStock'], FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
         }
 
         return $data;
@@ -162,8 +208,8 @@ class SalesorderController extends ApiCrudController
         $grandTotal = 0.0;
 
         foreach ($details as $i => $detail) {
-            $qty       = (float) ($detail['Quantity']  ?? 0);
-            $unitPrice = (float) ($detail['UnitPrice'] ?? 0);
+            $qty       = (float) ($detail['quantity']  ?? 0);
+            $unitPrice = (float) ($detail['unitPrice'] ?? 0);
 
             $lineTotal = $qty * $unitPrice;
 
@@ -181,9 +227,9 @@ class SalesorderController extends ApiCrudController
         foreach ($details as $row) {
             $rows[] = [
                 $this->detailForeignKey => $item->getKey(),
-                'ProductId'  => $row['ProductId']  ?? null,
-                'Quantity'   => $row['Quantity']   ?? 0,
-                'UnitPrice'  => $row['UnitPrice']  ?? 0,
+                'productId'  => $row['productId']  ?? null,
+                'quantity'   => $row['quantity']   ?? 0,
+                'unitPrice'  => $row['unitPrice']  ?? 0,
                 'totalPrice' => $row['totalPrice'] ?? 0,
                 'created_at' => $now,
                 'updated_at' => $now,
