@@ -15,11 +15,11 @@ class CampaignController extends ApiCrudController
 
     protected $fields = [
         'subject',
-        'deadline',
+        'end_date',
         'company',
         'service',
         'description',
-        'contact',
+        'primaryContact',
         'source',
         'type',
         'status',
@@ -33,11 +33,11 @@ class CampaignController extends ApiCrudController
 
     protected $rules = [
         'subject' => 'required|string|max:255',
-        'deadline' => 'required|date',
+        'end_date' => 'required|date',
         'company' => 'required|string|max:255',
         'service' => 'required|string|max:255',
         'description' => 'nullable|string|max:1000',
-        'contact' => 'nullable|string|max:255',
+        'primaryContact' => 'nullable|string|max:255',
         'source' => 'nullable|string|max:255',
         'type' => 'required|string|max:100',
         'status' => 'required|string|max:100',
@@ -74,11 +74,11 @@ class CampaignController extends ApiCrudController
             $query->select(
                 'id',
                 'subject',
-                'deadline',
+                'end_date',
                 'company',
                 'service',
                 'description',
-                'contact',
+                'primaryContact',
                 'source',
                 'type',
                 'status',

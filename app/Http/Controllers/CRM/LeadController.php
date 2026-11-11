@@ -14,7 +14,7 @@ class LeadController extends ApiCrudController
     protected $resourcePlural = 'Leads';
 
     protected $fields = [
-        'fullName',
+        'firstName',
         'email',
         'phone',
         'address',
@@ -28,14 +28,14 @@ class LeadController extends ApiCrudController
         'description',
     ];
 
-    protected $searchable = ['fullName', 'email', 'company', 'title'];
+    protected $searchable = ['firstName', 'email', 'company', 'title'];
 
     protected $searchOnList = false;
 
     protected $clearMissingOnUpdate = true;
 
     protected $rules = [
-        'fullName' => 'required|string|max:255',
+        'firstName' => 'required|string|max:255',
         'email' => 'required|email|max:255',
         'phone' => 'required|string|max:20',
         'address' => 'nullable|string|max:255',
@@ -79,7 +79,7 @@ class LeadController extends ApiCrudController
         if ($this->listMode === 'index') {
             $query->select(
                 'id',
-                'fullName',
+                'firstName',
                 'email',
                 'phone',
                 'address',
