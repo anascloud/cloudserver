@@ -38,6 +38,62 @@ class InvoiceController extends CrmCrudController
         'status',
         'stages',
         'file',
+
+        // extra fields the JS form actually sends
+        'customerCurrencyId',
+        'companyCurrencyId',
+        'company_id',
+        'exchangeRate',
+        'updateStock',
+        'shippingStreet',
+        'shippingHouse',
+        'shippingZip',
+        'shippingState',
+        'shippingCity',
+        'shippingCountryid',
+        'shippingContactPerson',
+        'billingStreet',
+        'billingHouse',
+        'billingZip',
+        'billingState',
+        'billingCity',
+        'billingCountryid',
+        'billingContactPerson',
+        'companyStreet',
+        'companyHouse',
+        'companyZip',
+        'companyState',
+        'companyCity',
+        'companyCountryid',
+        'companyContactPerson',
+        'discountType',
+        'applyDiscount',
+        'totalQuantity',
+        'total_amount',
+        'total_amountOnCustomerCurrency',
+        'total_amountOnCompanyCurrency',
+        'grandTotal',
+        'totalAdvanceAmount',
+        'totalAdvanceQuantity',
+        'isOpeningEntry',
+        'discountPercentage',
+        'ignorePricingRule',
+        'isCashOrNonTradeDiscount',
+        'isRateAdjustmentEntry',
+        'isReturn',
+        'netPayable',
+        'totalAdvance',
+        'totalTaxes',
+        'outstandingAmount',
+        'bankAccountid',
+        'cost_centerid',
+        'debitToid',
+        'priceList',
+        'taxCategoryid',
+        'taxTemplateid',
+        'warehouseid',
+        'grandTotalOnCustomerCurrency',
+        'grandTotalOnCompanyCurrency',
     ];
 
     protected $fileFields = [
@@ -45,8 +101,8 @@ class InvoiceController extends CrmCrudController
     ];
 
     protected $dateFields = [
-        'invoiceDate' => 'Y-m-d',
-        'dueDate' => 'Y-m-d',
+        'invoiceDate'    => 'Y-m-d',
+        'dueDate'        => 'Y-m-d',
         'customerPODate' => 'Y-m-d',
     ];
 
@@ -55,34 +111,46 @@ class InvoiceController extends CrmCrudController
     protected $searchOnList = false;
 
     protected $rules = [
-        'invoice_no' => 'nullable|string|max:100',
-        'type' => 'nullable|string|max:100',
-        'total' => 'nullable|numeric',
+        'invoice_no'       => 'nullable|string|max:100',
+        'type'             => 'nullable|string|max:100',
+        'total'            => 'nullable|numeric',
+        'customerid'       => 'nullable|integer|exists:customers,id',
+        'invoiceProductDetailsDTOs'   => 'sometimes|array',
+        'invoiceProductDetailsDTOs.*.productId' => 'nullable|integer',
+        'invoiceProductDetailsDTOs.*.quantity'  => 'nullable|numeric',
+        'invoiceProductDetailsDTOs.*.unitPrice' => 'nullable|numeric',
+        'invoiceProductDetailsDTOs.*.totalPrice'=> 'nullable|numeric',
+        'invoiceVatTaxDetailsDTOs'    => 'sometimes|array',
+        'invoiceVatTaxDetailsDTOs.*.chartOfAccountId' => 'nullable|integer',
+        'invoiceVatTaxDetailsDTOs.*.tax_rate'         => 'nullable|numeric',
+        'invoiceVatTaxDetailsDTOs.*.TaxAmount'        => 'nullable|numeric',
+        'invoiceVatTaxDetailsDTOs.*.tax_typeId'       => 'nullable|integer',
     ];
 
     protected $legacyStoreIdKey = 'invoiceId';
 
     protected $listMessage = 'Invoice List Fetched Successfully!';
-
     protected $indexAllMessage = 'All Invoices Fetched Successfully!';
 
     protected $legacyMessages = [
-        'show' => 'Invoice Details Fetched Successfully!',
-        'store' => 'New Invoice Created Successfully!',
-        'update' => 'Invoice Updated Successfully!',
-        'destroy' => 'Invoice Deleted Successfully!',
-        'bulk' => 'Invoices Deleted Successfully!',
-        'search' => 'Invoice Search Results Fetched Successfully!',
+        'show'      => 'Invoice Details Fetched Successfully!',
+        'store'     => 'New Invoice Created Successfully!',
+        'update'    => 'Invoice Updated Successfully!',
+        'destroy'   => 'Invoice Deleted Successfully!',
+        'bulk'      => 'Invoices Deleted Successfully!',
+        'search'    => 'Invoice Search Results Fetched Successfully!',
         'not_found' => 'Invoice Not Found',
     ];
 
-    protected $detailTable = 'invoice_details';
-
+    protected $detailTable      = 'invoice_details';
     protected $detailForeignKey = 'invoiceId';
+    protected $taxDetailTable   = 'invoice_vat_tax_details';
 
-    protected $taxDetailTable = 'invoice_vat_tax_details';
+    /* -----------------------------------------------------------------
+     |  Hooks
+     * ----------------------------------------------------------------- */
 
-    protected function beforeStore(Request $request, array $data)
+    protected function beforeStore(Request $request, array $data): array
     {
         if (empty($data['invoice_no'])) {
             $data['invoice_no'] = 'INV-' . now()->format('Ymd') . '-' . strtoupper(Str::random(5));
@@ -95,48 +163,61 @@ class InvoiceController extends CrmCrudController
         return $data;
     }
 
-    protected function afterStore(Request $request, $item)
+    /**
+     * Persist child rows for a freshly created invoice.
+     * Wrapped by the parent in a transaction — see note below.
+     */
+    protected function afterStore(Request $request, $item): void
     {
         $this->syncInvoiceDetails($request, $item);
         $this->syncTaxDetails($request, $item);
     }
 
-    protected function afterUpdate(Request $request, $item)
+    protected function afterUpdate(Request $request, $item): void
     {
         $this->syncInvoiceDetails($request, $item);
         $this->syncTaxDetails($request, $item);
     }
 
-    protected function invoiceDetails(Request $request)
+    /* -----------------------------------------------------------------
+     |  Detail sync
+     * ----------------------------------------------------------------- */
+
+    /**
+     * Resolve the product detail payload regardless of which key the
+     * caller used.
+     */
+    protected function invoiceDetails(Request $request): ?array
     {
         foreach (['invoiceProductDetailsDTOs', 'invoiceDetails', 'details'] as $key) {
             $details = $request->input($key);
-
             if (is_array($details)) {
                 return $details;
             }
         }
-
         return null;
     }
 
-    protected function syncInvoiceDetails(Request $request, $item)
+    protected function syncInvoiceDetails(Request $request, $item): void
     {
         $details = $this->invoiceDetails($request);
 
+        // null = payload didn't include details → leave existing rows alone
         if ($details === null) {
             return;
         }
 
         $invoiceId = $this->itemKey($item);
 
-        DB::table($this->detailTable)->where($this->detailForeignKey, $invoiceId)->delete();
+        DB::table($this->detailTable)
+            ->where($this->detailForeignKey, $invoiceId)
+            ->delete();
 
         if (empty($details)) {
             return;
         }
 
-        $now = now();
+        $now  = now();
         $rows = [];
 
         foreach ($details as $detail) {
@@ -144,19 +225,20 @@ class InvoiceController extends CrmCrudController
                 continue;
             }
 
-            $quantity = (float) ($detail['quantity'] ?? 0);
+            $quantity  = (float) ($detail['quantity'] ?? 0);
             $unitPrice = (float) ($detail['unitPrice'] ?? 0);
 
             $rows[] = [
                 $this->detailForeignKey => $invoiceId,
-                'productId' => $detail['productid'] ?? ($detail['productId'] ?? null),
-                'quantity' => $quantity,
-                'unit' => $detail['unit'] ?? null,
-                'unitPrice' => $unitPrice,
-                'vat' => (float) ($detail['vat'] ?? 0),
-                'tax' => (float) ($detail['tax'] ?? 0),
-                'discount' => (float) ($detail['discount'] ?? 0),
-                'totalPrice' => (float) ($detail['totalPrice'] ?? ($quantity * $unitPrice)),
+                // JS sends camelCase `productId` → prefer it, fall back to legacy
+                'productId'  => $detail['productId'] ?? ($detail['productid'] ?? null),
+                'quantity'   => $quantity,
+                'unit'       => $detail['unit'] ?? null,
+                'unitPrice'  => $unitPrice,
+                'vat'        => (float) ($detail['vat'] ?? 0),
+                'tax'        => (float) ($detail['tax'] ?? 0),
+                'discount'   => (float) ($detail['discount'] ?? 0),
+                'totalPrice' => (float) ($detail['totalPrice'] ?? round($quantity * $unitPrice, 4)),
                 'created_at' => $now,
                 'updated_at' => $now,
             ];
@@ -167,7 +249,7 @@ class InvoiceController extends CrmCrudController
         }
     }
 
-    protected function syncTaxDetails(Request $request, $item)
+    protected function syncTaxDetails(Request $request, $item): void
     {
         $taxDetails = $request->input('invoiceVatTaxDetailsDTOs', $request->input('taxDetails'));
 
@@ -177,9 +259,15 @@ class InvoiceController extends CrmCrudController
 
         $invoiceId = $this->itemKey($item);
 
-        DB::table($this->taxDetailTable)->where('invoiceId', $invoiceId)->delete();
+        DB::table($this->taxDetailTable)
+            ->where('invoiceId', $invoiceId)
+            ->delete();
 
-        $now = now();
+        if (empty($taxDetails)) {
+            return;
+        }
+
+        $now  = now();
         $rows = [];
 
         foreach ($taxDetails as $detail) {
@@ -187,14 +275,17 @@ class InvoiceController extends CrmCrudController
                 continue;
             }
 
+            // JS sends `TaxAmount` (capital T). Accept both casings.
+            $taxAmount = $detail['taxAmount'] ?? $detail['TaxAmount'] ?? 0;
+
             $rows[] = [
-                'invoiceId' => $invoiceId,
+                'invoiceId'        => $invoiceId,
                 'chartOfAccountId' => $detail['chartOfAccountId'] ?? null,
-                'tax_rate' => (float) ($detail['tax_rate'] ?? 0),
-                'taxAmount' => (float) ($detail['taxAmount'] ?? 0),
-                'tax_typeId' => $detail['tax_typeId'] ?? null,
-                'created_at' => $now,
-                'updated_at' => $now,
+                'tax_rate'         => (float) ($detail['tax_rate'] ?? 0),
+                'taxAmount'        => (float) $taxAmount,
+                'tax_typeId'       => $detail['tax_typeId'] ?? null,
+                'created_at'       => $now,
+                'updated_at'       => $now,
             ];
         }
 
@@ -202,6 +293,10 @@ class InvoiceController extends CrmCrudController
             DB::table($this->taxDetailTable)->insert($rows);
         }
     }
+
+    /* -----------------------------------------------------------------
+     |  Read / status endpoints
+     * ----------------------------------------------------------------- */
 
     public function show($id)
     {
@@ -226,6 +321,8 @@ class InvoiceController extends CrmCrudController
                     ->where('invoiceId', $id)
                     ->orderBy('id')
                     ->get();
+
+                $item->invoiceVatTaxDetailsDTOs = $item->taxDetails;
             }
 
             return $this->respondShow($item);
@@ -238,23 +335,57 @@ class InvoiceController extends CrmCrudController
     {
         $id = $id ?: $request->input('id');
 
-        $item = $id ? DB::table($this->dbTable)->where('id', $id)->first() : null;
+        $item = $id
+            ? DB::table($this->dbTable)->where('id', $id)->first()
+            : null;
 
         if ($item === null) {
             return $this->notFoundForWrite();
         }
 
+        // Normalise: accept {status:"..."} JSON or a raw quoted string body
         $status = $request->input('status');
-
         if ($status === null) {
             $status = trim((string) $request->getContent(), " \t\n\r\0\x0B\"'");
         }
 
+        $allowed = ['Draft', 'Open', 'Paid', 'Partially Paid', 'Overdue', 'Cancelled', 'Returned'];
+        if (!in_array($status, $allowed, true)) {
+            return ResponseRepository::ResponseError(
+                null,
+                "Invalid status. Allowed: " . implode(', ', $allowed),
+                422
+            );
+        }
+
         DB::table($this->dbTable)->where('id', $id)->update([
-            'status' => $status,
+            'status'     => $status,
             'updated_at' => now(),
         ]);
 
-        return $this->respondWrite(['id' => $id, 'status' => $status], 'Invoice Status Updated Successfully!');
+        return $this->respondWrite(
+            ['id' => $id, 'status' => $status],
+            'Invoice Status Updated Successfully!'
+        );
+    }
+
+    /* -----------------------------------------------------------------
+     |  Optional: safe bulk-clear if the parent doesn't override it
+     * ----------------------------------------------------------------- */
+
+    public function destroy($id)
+    {
+        $item = $this->findItem($id);
+        if ($item === null) {
+            return $this->notFoundForWrite();
+        }
+
+        DB::transaction(function () use ($id) {
+            DB::table($this->detailTable)->where($this->detailForeignKey, $id)->delete();
+            DB::table($this->taxDetailTable)->where('invoiceId', $id)->delete();
+            DB::table($this->dbTable)->where('id', $id)->delete();
+        });
+
+        return $this->respondWrite(['id' => $id], $this->legacyMessages['destroy']);
     }
 }
