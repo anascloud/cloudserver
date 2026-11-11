@@ -56,7 +56,16 @@ use App\Http\Controllers\FM\DashboardController;
 use App\Http\Controllers\SCM\FeatureReportController;
 use App\Http\Controllers\CRM\CustomerController;
 use App\Http\Controllers\CRM\AccountReceivableController;
+use App\Http\Controllers\CRM\ApprovalController;
+use App\Http\Controllers\CRM\BillController;
+use App\Http\Controllers\CRM\ContactController;
 use App\Http\Controllers\CRM\FeedbacksController;
+use App\Http\Controllers\CRM\InvoiceController;
+use App\Http\Controllers\CRM\LogController;
+use App\Http\Controllers\CRM\MeetingController;
+use App\Http\Controllers\CRM\SlaController;
+use App\Http\Controllers\CRM\TargetController;
+use App\Http\Controllers\CRM\TicketController;
 use App\Http\Controllers\SCM\WarehouseController;
 use App\Http\Controllers\SCM\WarehouseManagerController;
 use App\Http\Controllers\HRMS\EmployeeController;
@@ -131,7 +140,16 @@ Route::group([
         Route::resource('units', UnitController::class);
         Route::resource('projects', ProjectsController::class);
         Route::resource('feedbacks', FeedbacksController::class);
-        Route::get('reporting/account-recivable-report', [AccountReceivableController::class, 'index']);
+        Route::resource('approvals', ApprovalController::class);
+        Route::resource('bills', BillController::class);
+        Route::resource('contacts', ContactController::class);
+        Route::resource('invoices', InvoiceController::class);
+        Route::resource('logs', LogController::class);
+        Route::resource('meetings', MeetingController::class);
+        Route::resource('slas', SlaController::class);
+        Route::resource('targets', TargetController::class);
+        Route::resource('tickets', TicketController::class);
+        Route::get('reporting/account-recivable-report',[AccountReceivableController::class, 'index']);
     });
 
     Route::prefix('scm/v1')->group(function () {
