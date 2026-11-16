@@ -58,6 +58,7 @@ use App\Http\Controllers\CRM\CustomerController;
 use App\Http\Controllers\CRM\AccountReceivableController;
 use App\Http\Controllers\CRM\ApprovalController;
 use App\Http\Controllers\CRM\BillController;
+use App\Http\Controllers\CRM\BillsController;
 use App\Http\Controllers\CRM\ContactController;
 use App\Http\Controllers\CRM\FeedbacksController;
 use App\Http\Controllers\CRM\InvoiceController;
@@ -144,6 +145,7 @@ Route::group([
         Route::resource('bills', BillController::class);
         Route::resource('contacts', ContactController::class);
         Route::resource('invoices', InvoiceController::class);
+        Route::resource('bills', BillsController::class);
         Route::resource('logs', LogController::class);
         Route::resource('meetings', MeetingController::class);
         Route::resource('slas', SlaController::class);
