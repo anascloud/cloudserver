@@ -14,15 +14,14 @@ class TicketController extends CrmCrudController
 
     protected $fields = [
         'subject',
-        'type',
-        'departmentId',
+        'customerId',
         'mergeTicketId',
         'service',
         'email',
         'project',
         'file',
         'status',
-        'createdBy',
+        'created_by',
     ];
 
     protected $fileFields = [
@@ -61,7 +60,7 @@ class TicketController extends CrmCrudController
         }
 
         if (empty($data['createdBy']) && auth()->check()) {
-            $data['createdBy'] = auth()->user()->email ?? auth()->user()->name;
+            $data['created_by'] = auth()->id();
         }
 
         return $data;

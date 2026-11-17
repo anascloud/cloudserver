@@ -13,8 +13,8 @@ class ContactController extends CrmCrudController
     protected $resourcePlural = 'Contacts';
 
     protected $fields = [
-        'subject',
         'type',
+        'subject',
         'contactDate',
         'contactTime',
         'relatedTo',
@@ -22,12 +22,12 @@ class ContactController extends CrmCrudController
         'file',
         'duration',
         'status',
-        'campaignid',
-        'leadid',
-        'opportunityid',
-        'salesOrdersid',
-        'invoiceid',
-        'quotationid',
+        'campaignId',
+        'leadId',
+        'opportunityId',
+        'salesOrdersId',
+        'invoiceId',
+        'quotationId',
     ];
 
     protected $fileFields = [
@@ -36,6 +36,7 @@ class ContactController extends CrmCrudController
 
     protected $dateFields = [
         'contactDate' => 'Y-m-d',
+        'contactTime' => 'Y-m-d H:i:s',
     ];
 
     protected $searchable = ['subject', 'type', 'relatedTo', 'description'];
@@ -45,6 +46,9 @@ class ContactController extends CrmCrudController
     protected $rules = [
         'subject' => 'nullable|string|max:255',
         'contactDate' => 'nullable|date',
+        'contactTime' => 'nullable|date',
+        'duration' => 'nullable|numeric',
+        'file' => 'nullable|file',
     ];
 
     protected $legacyStoreIdKey = 'contactId';
@@ -69,6 +73,11 @@ class ContactController extends CrmCrudController
             $data['status'] = 'Active';
         }
 
+        return $data;
+    }
+
+    protected function beforeUpdate(Request $request, array $data, $item)
+    {
         return $data;
     }
 

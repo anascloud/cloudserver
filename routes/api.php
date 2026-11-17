@@ -143,7 +143,7 @@ Route::group([
         Route::resource('feedbacks', FeedbacksController::class);
         Route::resource('approvals', ApprovalController::class);
         Route::resource('bills', BillController::class);
-        Route::resource('contacts', ContactController::class);
+        Route::resource('contact', ContactController::class);
         Route::resource('invoices', InvoiceController::class);
         Route::resource('bills', BillsController::class);
         Route::resource('logs', LogController::class);
