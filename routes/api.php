@@ -73,6 +73,9 @@ use App\Http\Controllers\HRMS\EmployeeController;
 use App\Http\Controllers\CRM\TaskController;
 use App\Http\Controllers\CRM\SettingController;
 use App\Http\Controllers\CRM\EmailSettingController;
+use App\Http\Controllers\CRM\NotificationController;
+use App\Http\Controllers\CRM\MessageController;
+use App\Http\Controllers\CRM\MessageDetailController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -157,6 +160,12 @@ Route::group([
         Route::resource('sla', SlaController::class);
         Route::resource('generalsetting', SettingController::class);
         Route::resource('emailsetting', EmailSettingController::class);
+        Route::resource('notification', NotificationController::class);
+        Route::get('message/details', [MessageDetailController::class, 'index']);
+        Route::get('message/content', [MessageDetailController::class, 'index']);
+        Route::post('message/content', [MessageDetailController::class, 'store']);
+        Route::put('message/change-block/{id}', [MessageController::class, 'changeBlock']);
+        Route::resource('message', MessageController::class);
         Route::get('reminders', [TaskController::class, 'reminders']);
         Route::get('reporting/account-recivable-report',[AccountReceivableController::class, 'index']);
     });
