@@ -72,6 +72,7 @@ use App\Http\Controllers\SCM\WarehouseManagerController;
 use App\Http\Controllers\HRMS\EmployeeController;
 use App\Http\Controllers\CRM\TaskController;
 use App\Http\Controllers\CRM\SettingController;
+use App\Http\Controllers\CRM\EmailSettingController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -155,6 +156,7 @@ Route::group([
         Route::resource('ticket', TicketController::class);
         Route::resource('sla', SlaController::class);
         Route::resource('generalsetting', SettingController::class);
+        Route::resource('emailsetting', EmailSettingController::class);
         Route::get('reminders', [TaskController::class, 'reminders']);
         Route::get('reporting/account-recivable-report',[AccountReceivableController::class, 'index']);
     });
