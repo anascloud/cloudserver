@@ -70,7 +70,7 @@ use App\Http\Controllers\CRM\TicketController;
 use App\Http\Controllers\SCM\WarehouseController;
 use App\Http\Controllers\SCM\WarehouseManagerController;
 use App\Http\Controllers\HRMS\EmployeeController;
-use App\Http\Controllers\Tasks\TasksController;
+use App\Http\Controllers\CRM\TaskController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -130,7 +130,7 @@ Route::group([
         Route::resource('attribute', AttributeController::class);
         Route::resource('stock', StocksController::class);
         Route::resource('customer', CustomerController::class);
-        Route::resource('tasks', TasksController::class);
+        Route::resource('tasks', TaskController::class);
         Route::resource('products', ProductsController::class);
         Route::resource('campaign', CampaignController::class);
         Route::resource('lead', LeadController::class);
@@ -151,6 +151,7 @@ Route::group([
         Route::resource('slas', SlaController::class);
         Route::resource('targetgoal', TargetController::class);
         Route::resource('ticket', TicketController::class);
+        Route::resource('sla', SlaController::class);
         Route::get('reporting/account-recivable-report',[AccountReceivableController::class, 'index']);
     });
 
