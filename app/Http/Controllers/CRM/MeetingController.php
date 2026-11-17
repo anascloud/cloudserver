@@ -14,30 +14,25 @@ class MeetingController extends CrmCrudController
 
     protected $fields = [
         'title',
-        'meetingDate',
+        'location',
         'meetingTime',
-        'repeatDate',
         'repeatTime',
         'relatedTo',
         'description',
-        'participantIds',
         'participateType',
-        'location',
-        'repeat',
-        'reminder',
-        'status',
-        'campaignid',
+        'participantIds',
+        'campaignId',
         'leadid',
-        'opportunityid',
-        'salesOrdersid',
+        'opportunityId',
+        'salesOrdersId',
         'invoiceid',
-        'quotationid',
-        'createdBy',
+        'quotationId',
+        'created_by',
     ];
 
     protected $dateFields = [
-        'meetingDate' => 'Y-m-d',
-        'repeatDate' => 'Y-m-d',
+        'meetingTime' => 'Y-m-d H:i:s',
+        'repeatTime' => 'Y-m-d H:i:s',
     ];
 
     protected $searchable = ['title', 'location', 'relatedTo', 'description', 'participateType'];
@@ -46,7 +41,7 @@ class MeetingController extends CrmCrudController
 
     protected $rules = [
         'title' => 'nullable|string|max:255',
-        'meetingDate' => 'nullable|date',
+        'meetingTime' => 'nullable|date',
     ];
 
     protected $legacyStoreIdKey = 'meetingId';
@@ -74,7 +69,7 @@ class MeetingController extends CrmCrudController
         }
 
         if (empty($data['createdBy']) && auth()->check()) {
-            $data['createdBy'] = auth()->user()->email ?? auth()->user()->name;
+            $data['created_by'] = auth()->id();
         }
 
         return $data;

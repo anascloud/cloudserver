@@ -147,9 +147,9 @@ Route::group([
         Route::resource('invoices', InvoiceController::class);
         Route::resource('bills', BillsController::class);
         Route::resource('logs', LogController::class);
-        Route::resource('meetings', MeetingController::class);
+        Route::resource('meeting', MeetingController::class);
         Route::resource('slas', SlaController::class);
-        Route::resource('targets', TargetController::class);
+        Route::resource('targetgoal', TargetController::class);
         Route::resource('ticket', TicketController::class);
         Route::get('reporting/account-recivable-report',[AccountReceivableController::class, 'index']);
     });
