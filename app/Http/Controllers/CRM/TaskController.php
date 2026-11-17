@@ -102,6 +102,54 @@ class TaskController extends CrmCrudController
         return $data;
     }
 
+    public function updateStatus(Request $request, $id)
+    {
+        $this->listMode = null;
+
+        try {
+            $item = $this->findItem($id);
+
+            if ($item === null) {
+                return $this->notFoundForWrite();
+            }
+
+            $status = $request->input('status');
+
+            if ($status === null) {
+                $status = trim((string) $request->getContent(), " \t\n\r\0\x0B\"'");
+            }
+
+            $status = (string) $status;
+
+            $allowed = ['1', '2', '3', '4', '5'];
+
+            if (!in_array($status, $allowed, true)) {
+                return response()->json([
+                    'message' => 'Invalid status. Allowed: ' . implode(', ', $allowed),
+                    'type' => 'error',
+                ], 422);
+            }
+
+            $data = ['status' => $status];
+
+            if ($request->filled('shortOrder')) {
+                $data['shortOrder'] = $request->input('shortOrder');
+            }
+
+            if ($this->timestamps) {
+                $data['updated_at'] = now();
+            }
+
+            $this->query()->where('id', $id)->update($data);
+
+            $item = $this->query()->where('id', $id)->first();
+
+            return $this->respondWrite($item, $this->message('update'));
+        } catch (\Throwable $e) {
+            return $this->respondWriteError($e->getMessage(), $this->writeErrorStatus);
+        }
+    }
+
     protected function applyListQuery($query, Request $request)
     {
         if ($request->filled('type')) {

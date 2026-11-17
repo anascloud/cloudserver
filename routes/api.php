@@ -131,6 +131,7 @@ Route::group([
         Route::resource('stock', StocksController::class);
         Route::resource('customer', CustomerController::class);
         Route::resource('tasks', TaskController::class);
+        Route::put('tasks/{id}/status', [TaskController::class, 'updateStatus']);
         Route::resource('products', ProductsController::class);
         Route::resource('campaign', CampaignController::class);
         Route::resource('lead', LeadController::class);
