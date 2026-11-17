@@ -164,4 +164,9 @@ class TaskController extends CrmCrudController
             $query->where('assignedTo', $request->input('assignedTo'));
         }
     }
+
+    public function reminders()
+    {
+        return $this->query()->where('reminder', true)->get();
+    }
 }
