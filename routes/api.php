@@ -76,6 +76,7 @@ use App\Http\Controllers\CRM\EmailSettingController;
 use App\Http\Controllers\CRM\NotificationController;
 use App\Http\Controllers\CRM\MessageController;
 use App\Http\Controllers\CRM\MessageDetailController;
+use App\Http\Controllers\CRM\ReportingController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -168,6 +169,9 @@ Route::group([
         Route::resource('message', MessageController::class);
         Route::get('reminders', [TaskController::class, 'reminders']);
         Route::get('reporting/account-recivable-report',[AccountReceivableController::class, 'index']);
+        Route::get('reporting/monthly-sales-report', [ReportingController::class, 'monthlySalesReport']);
+        Route::get('reporting/total-summary-report', [ReportingController::class, 'totalSummaryReport']);
+        Route::get('reporting/dashboard-top-user-report', [ReportingController::class, 'dashboardTopUserReport']);
     });
 
     Route::prefix('scm/v1')->group(function () {
