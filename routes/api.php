@@ -77,6 +77,7 @@ use App\Http\Controllers\CRM\NotificationController;
 use App\Http\Controllers\CRM\MessageController;
 use App\Http\Controllers\CRM\MessageDetailController;
 use App\Http\Controllers\CRM\ReportingController;
+use App\Http\Controllers\CRM\AnalyticsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -149,6 +150,12 @@ Route::group([
         Route::resource('projects', ProjectsController::class);
         Route::resource('feedbacks', FeedbacksController::class);
         Route::resource('approvals', ApprovalController::class);
+        Route::get('approval', [ApprovalController::class, 'index']);
+        Route::post('approval', [ApprovalController::class, 'store']);
+        Route::put('approval/approval-update', [ApprovalController::class, 'updateApproval']);
+        Route::get('approval/{id}', [ApprovalController::class, 'show']);
+        Route::put('approval/{id}', [ApprovalController::class, 'update']);
+        Route::delete('approval/{id}', [ApprovalController::class, 'destroy']);
         Route::resource('bills', BillController::class);
         Route::resource('contact', ContactController::class);
         Route::resource('invoices', InvoiceController::class);
@@ -172,6 +179,22 @@ Route::group([
         Route::get('reporting/monthly-sales-report', [ReportingController::class, 'monthlySalesReport']);
         Route::get('reporting/total-summary-report', [ReportingController::class, 'totalSummaryReport']);
         Route::get('reporting/dashboard-top-user-report', [ReportingController::class, 'dashboardTopUserReport']);
+        Route::prefix('analytics')->group(function () {
+            Route::get('lead-overview', [AnalyticsController::class, 'leadOverview']);
+            Route::get('sales-revenue-overview', [AnalyticsController::class, 'salesRevenueOverview']);
+            Route::get('deals-in-pipeline', [AnalyticsController::class, 'dealPipelineSummary']);
+            Route::get('customer-overview', [AnalyticsController::class, 'customerOverview']);
+            Route::get('lead-target-month-overview', [AnalyticsController::class, 'leadTargetOverview']);
+            Route::get('revenue-target-year-overview', [AnalyticsController::class, 'revenueTargetOverview']);
+            Route::get('last-three-month-performance-overview', [AnalyticsController::class, 'threeMonthsLead']);
+            Route::get('lead-source-overview', [AnalyticsController::class, 'leadSourceOverview']);
+            Route::get('profile-sale-overview', [AnalyticsController::class, 'profileSaleOverview']);
+            Route::get('today-lead-analytics', [AnalyticsController::class, 'todayLeadAnalytics']);
+            Route::get('this-week-lead-analytics', [AnalyticsController::class, 'thisWeekLeadAnalytics']);
+            Route::get('top-lead-source-analytics', [AnalyticsController::class, 'topLeadSourceAnalytics']);
+            Route::get('monthly-lead-analytics', [AnalyticsController::class, 'monthlyLeadAnalytics']);
+            Route::get('industry-lead-analytics', [AnalyticsController::class, 'industryLeadAnalytics']);
+        });
     });
 
     Route::prefix('scm/v1')->group(function () {
